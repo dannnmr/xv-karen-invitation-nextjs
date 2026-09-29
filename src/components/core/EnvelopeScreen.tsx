@@ -185,9 +185,12 @@ export function EnvelopeScreen({
           devuelve a su lugar como una cuerda con peso. */}
       {envelope?.pullCord && (
         <motion.div
-          // `right-[12%]` en móvil: la cartela del texto es más ancha que la
+          // `right-[16%]` en móvil: la cartela del texto es más ancha que la
           // cuerda y, más pegada al borde, se salía de la pantalla.
-          className="absolute top-0 right-[12%] md:right-[14%] z-30 flex flex-col items-center"
+          // Top negativo: la cuerda es enorme (ver alto abajo) y su tramo
+          // superior queda fuera de pantalla -> se ve gruesa sin que la
+          // borla baje más allá de ~34vh / ~38vh.
+          className="absolute -top-[26vh] md:-top-[32vh] right-[16%] md:right-[14%] z-30 flex flex-col items-center"
           initial={{ y: 0, opacity: 1 }}
           animate={
             isOpening
@@ -211,9 +214,11 @@ export function EnvelopeScreen({
             animate={isOpening ? { rotate: 0 } : { rotate: [-1.5, 1.5, -1.5] }}
             transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
             style={{ transformOrigin: "top center", touchAction: "none" }}
-            // Cuerda corta (antes 34vh / 52vh): larga llegaba casi al medio
-            // de la pantalla y el "tirón" se perdía.
-            className="relative w-16 h-[22vh] md:h-[30vh] cursor-grab active:cursor-grabbing"
+            // El asset es una cuerda finita (172x2257 recortada): su grosor en
+            // pantalla lo manda el alto (`object-contain`). Alto grande para
+            // que se vea gruesa; el top negativo del contenedor evita que la
+            // punta llegue al medio de la pantalla (ahí el "tirón" se perdía).
+            className="relative w-20 h-[60vh] md:h-[70vh] cursor-grab active:cursor-grabbing"
           >
             {/* El asset es un lienzo ancho (500x587) con una cuerda finita en
                 el centro: sin recortar, `object-contain` en un botón angosto
@@ -231,30 +236,37 @@ export function EnvelopeScreen({
           </motion.button>
           <AnimatePresence>
             {!isOpening && (
-              <motion.span
+              // La cartela también es un botón: tocarla abre igual que la
+              // cuerda (hay invitados que no descubren el arrastre). Quieta,
+              // sin vaivén (a pedido); solo se desvanece al abrir.
+              <motion.button
+                type="button"
+                onClick={handleOpen}
+                aria-label="Abrir invitación"
                 exit={{ opacity: 0 }}
-                animate={{ y: [0, 5, 0] }}
-                transition={{ duration: 1.6, repeat: Infinity }}
                 // Texto sobre la cartela ornamental (821x320 recortada, la
-                // misma de Padres): el padding deja el texto en su zona lisa.
-                className="-mt-1 flex items-center justify-center w-[150px] md:w-[180px] aspect-[821/320] font-mono text-[0.58rem] md:text-[0.65rem] font-semibold uppercase tracking-[0.2em] whitespace-nowrap drop-shadow-md"
+                // misma de Padres), centrado en su zona lisa.
+                className="-mt-1 flex items-center justify-center w-[180px] md:w-[220px] aspect-[821/320] font-mono text-[0.68rem] md:text-[0.78rem] font-semibold uppercase tracking-[0.2em] whitespace-nowrap drop-shadow-md cursor-pointer"
                 style={{
                   color: colors.accent,
-                  backgroundImage: `url("${trimmedAsset(ASSETS.cartela, 400)}")`,
+                  backgroundImage: `url("${trimmedAsset(ASSETS.cartela, 500)}")`,
                   backgroundSize: "100% 100%",
                   backgroundRepeat: "no-repeat",
                 }}
               >
                 Jala la cuerda
-              </motion.span>
+              </motion.button>
             )}
           </AnimatePresence>
         </motion.div>
       )}
 
-      {/* Broche / sello -- también abre al tocarlo. */}
+      {/* Broche / sello -- también abre al tocarlo. Solo sin cuerda: con
+          cuerda (Karen) ella y su cartela son la única forma de abrir y el
+          centro queda libre (se quitó la máscara a pedido). `seal` sigue en
+          la config porque layout.tsx lo usa como favicon. */}
       <AnimatePresence>
-        {!isOpening && (
+        {!isOpening && !envelope?.pullCord && (
           <motion.div
             exit={{ opacity: 0, scale: 1.4 }}
             transition={{ duration: 0.4 }}

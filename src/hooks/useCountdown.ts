@@ -11,7 +11,9 @@ export function useCountdown(targetDate: Date) {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    // Primer cálculo inmediato: solo con `setInterval` la sección mostraba
+    // "00 00 00 00" durante el primer segundo.
+    const tick = () => {
       const distance = targetDate.getTime() - Date.now();
       if (distance < 0) {
         clearInterval(interval);
@@ -25,7 +27,9 @@ export function useCountdown(targetDate: Date) {
         minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
         seconds: Math.floor((distance % (1000 * 60)) / 1000),
       });
-    }, 1000);
+    };
+    const interval = setInterval(tick, 1000);
+    tick();
 
     return () => clearInterval(interval);
   }, [targetDate]);

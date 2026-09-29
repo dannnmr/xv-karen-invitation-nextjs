@@ -68,7 +68,7 @@ export function DressCodeSection({ config }: { config: InvitationConfig }) {
   const doily = config.visuals.dressCodeDoily;
 
   return (
-    <section className="relative py-10 px-6 flex flex-col items-center overflow-hidden">
+    <section className="relative py-5 px-6 flex flex-col items-center overflow-hidden">
       {/* Contenedor del arco: la capa CARD_DECOR se posiciona respecto a la
           tarjeta y queda DETRÁS de ella (va antes en el DOM, z-0). */}
       <div className="relative z-10 max-w-90 w-full">
@@ -95,11 +95,11 @@ export function DressCodeSection({ config }: { config: InvitationConfig }) {
             eyebrow="Sugerencia de estilo"
             title="Dress Code"
             colors={colors}
-            className="mb-6"
+            className="mb-2"
           />
 
           <h4
-            className="font-sans text-xl uppercase tracking-[0.3em] font-light mb-6"
+            className="font-sans text-xl uppercase tracking-[0.3em] font-light mb-2"
             style={{ color: colors.accent }}
           >
             {config.dressCode.description}
@@ -110,7 +110,7 @@ export function DressCodeSection({ config }: { config: InvitationConfig }) {
               que queda como respaldo sin el asset). */}
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className={`relative flex flex-col items-center justify-center gap-1.5 mb-10 ${
+            className={`relative flex flex-col items-center justify-center gap-1.5 mb-5 ${
               doily
                 ? "w-52 h-52 md:w-60 md:h-60"
                 : "w-40 h-40 md:w-48 md:h-48 rounded-full"
@@ -171,7 +171,7 @@ export function DressCodeSection({ config }: { config: InvitationConfig }) {
             no se dibuja el bloque. */}
           {reserved.length > 0 && (
             <div
-              className="flex flex-col items-center gap-3 w-full border-t pt-8"
+              className="flex flex-col items-center gap-3 w-full border-t pt-4"
               style={{ borderColor: `${colors.accent}20` }}
             >
               <span

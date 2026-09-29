@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, type CSSProperties, type FormEvent } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
@@ -10,44 +10,50 @@ import { ASSETS, type InvitationConfig } from "@/config/invitation";
 
 /**
  * Confirmación por WhatsApp (Karen no tiene RSVP automático): el invitado
- * escribe su nombre (opcional) y elige "asistiré" / "no podré asistir"; se
- * abre WhatsApp con el mensaje armado hacia el número de la familia. Mismo
- * patrón que `buildWhatsAppUrl` de gredmarie-xv-invitation
- * (RSVPSection.tsx), con las dos respuestas explícitas de las demás
- * invitaciones. Sin backend: nada se guarda en Supabase.
+ * escribe su nombre (obligatorio, a pedido: la familia necesita saber quién
+ * confirma) y toca el único botón "Confirmar asistencia"; se abre WhatsApp
+ * con el mensaje armado hacia el número de la familia. Mismo patrón que
+ * `buildWhatsAppUrl` de gredmarie-xv-invitation (RSVPSection.tsx). Sin
+ * botón de "no podré asistir" (pedido de la clienta). Sin backend: nada se
+ * guarda en Supabase.
  * El formulario va sobre el encaje rectangular (`LaceFrame`), con el
  * corazón de encaje asomando detrás.
  */
-function buildWhatsAppUrl(
-  config: InvitationConfig,
-  guestName: string,
-  attending: boolean,
-) {
+function buildWhatsAppUrl(config: InvitationConfig, guestName: string) {
   const { name, eventType } = config.client;
-  const who = guestName.trim() ? ` Soy ${guestName.trim()}.` : "";
-  const message = attending
-    ? `¡Hola! Confirmo mi asistencia a los ${eventType} de ${name}.${who}`
-    : `¡Hola! Lamentablemente no podré asistir a los ${eventType} de ${name}.${who}`;
+  const message = `¡Hola! Soy ${guestName.trim()} y confirmo mi asistencia a los ${eventType} de ${name}.`;
   return `https://wa.me/${config.rsvp.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
 
 export function WhatsAppRsvpSection({ config }: { config: InvitationConfig }) {
   const { colors } = config.theme;
   const [guestName, setGuestName] = useState("");
+  // El aviso aparece solo después de intentar confirmar sin nombre (no
+  // antes: un error en rojo de entrada se leería como algo roto).
+  const [showError, setShowError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const missingName = !guestName.trim();
 
-  const open = (attending: boolean) =>
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (missingName) {
+      setShowError(true);
+      inputRef.current?.focus();
+      return;
+    }
     window.open(
-      buildWhatsAppUrl(config, guestName, attending),
+      buildWhatsAppUrl(config, guestName),
       "_blank",
       "noopener,noreferrer",
     );
+  };
 
   return (
     <section className="relative py-20 px-6 flex flex-col items-center overflow-hidden">
       {/* En móvil el encaje es más ancho que la pantalla (el overflow de la
           sección recorta los bordes de encaje) para que la zona lisa tenga
           espacio para el formulario. */}
-      <div className="relative w-[112vw] max-w-[560px] shrink-0">
+      <div className="relative w-[92vw] max-w-[560px] shrink-0">
         {/* Corazón de encaje asomando por detrás del marco (arriba a la
             derecha), inclinado. */}
         <div
@@ -84,55 +90,74 @@ export function WhatsAppRsvpSection({ config }: { config: InvitationConfig }) {
             className="font-sans text-[0.65rem] md:text-xs tracking-[0.12em] uppercase mb-6 text-center"
             style={{ color: colors.ink, opacity: 0.75 }}
           >
-            Por WhatsApp, antes del{" "}
+            Confirmar antes del{" "}
             {config.rsvp.deadline.toLocaleDateString("es-ES", {
               day: "numeric",
               month: "long",
             })}
           </p>
 
-          <label
-            htmlFor="guestName"
-            className="block font-sans text-[0.6rem] uppercase tracking-[0.3em] font-medium mb-1"
-            style={{ color: colors.accent }}
-          >
-            Tu nombre
-          </label>
-          <input
-            id="guestName"
-            value={guestName}
-            onChange={(e) => setGuestName(e.target.value)}
-            placeholder="Ej. María Pérez"
-            // `text-base` (16px): con menos, iOS Safari hace zoom al enfocar.
-            className="w-full bg-transparent border-b focus:outline-none font-display italic text-base pb-1 mb-6 placeholder-black/30"
-            style={{ color: colors.ink, borderColor: `${colors.gold}66` }}
-          />
+          <form onSubmit={handleSubmit} noValidate>
+            <label
+              htmlFor="guestName"
+              className="block font-sans text-[0.7rem] md:text-xs uppercase tracking-[0.2em] font-semibold mb-2 text-center"
+              style={{ color: colors.accent }}
+            >
+              Escribe tu nombre completo
+            </label>
+            {/* Campo en caja (no una línea fina): que se note que hay que
+                llenarlo antes de confirmar. */}
+            <input
+              ref={inputRef}
+              id="guestName"
+              value={guestName}
+              onChange={(e) => {
+                setGuestName(e.target.value);
+                if (showError) setShowError(false);
+              }}
+              placeholder="Ej. María Pérez"
+              autoComplete="name"
+              required
+              aria-invalid={showError}
+              aria-describedby={showError ? "guestNameError" : undefined}
+              // `text-base` (16px): con menos, iOS Safari hace zoom al enfocar.
+              className="w-full rounded-xl border-[1.5px] px-4 py-3 text-center font-display italic text-base shadow-inner focus:outline-none focus:ring-2 placeholder-black/35"
+              style={
+                {
+                  color: colors.ink,
+                  backgroundColor: "rgba(255,255,255,0.85)",
+                  borderColor: showError ? "#B3261E" : colors.gold,
+                  "--tw-ring-color": `${colors.gold}55`,
+                } as CSSProperties
+              }
+            />
+            <p
+              id="guestNameError"
+              role="alert"
+              className="min-h-5 mt-1.5 mb-3 font-sans text-[0.65rem] text-center"
+              style={{ color: "#B3261E" }}
+            >
+              {showError && "Por favor, escribe tu nombre para confirmar."}
+            </p>
 
-          <div className="flex flex-col gap-3">
             <motion.button
-              type="button"
-              onClick={() => open(true)}
+              type="submit"
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.97 }}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-sans text-[0.7rem] uppercase tracking-[0.25em] font-semibold shadow-md"
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-sans text-[0.7rem] uppercase tracking-[0.25em] font-semibold shadow-md transition-opacity"
               style={{
                 backgroundColor: colors.accent,
                 color: colors.paper,
                 boxShadow: `0 10px 22px ${colors.accent}40`,
+                // Atenuado (no deshabilitado) sin nombre: sigue tocable para
+                // mostrar el aviso de por qué no avanza.
+                opacity: missingName ? 0.6 : 1,
               }}
             >
               <MessageCircle size={15} />
-              Sí, asistiré
+              Confirmar asistencia
             </motion.button>
-            <button
-              type="button"
-              onClick={() => open(false)}
-              className="w-full py-3 rounded-full font-sans text-[0.65rem] uppercase tracking-[0.25em] border"
-              style={{ color: colors.accent, borderColor: `${colors.gold}80` }}
-            >
-              No podré asistir
-            </button>
-          </div>
+          </form>
         </LaceFrame>
       </div>
     </section>

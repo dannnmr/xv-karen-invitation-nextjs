@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import Image from "next/image";
-import { Heart } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { trimmedAsset } from "@/components/ui/LaceFrame";
 import { ASSETS, type InvitationConfig } from "@/config/invitation";
 
 /**
  * Itinerario estilo vania-tania-invitation (pedido explícito): camino en
- * zigzag punteado (SVG en píxeles reales del contenedor) y un corazón que
- * lo RECORRE con el scroll.
+ * zigzag punteado (SVG en píxeles reales del contenedor) y una flor dorada
+ * (el corazón del original, cambiado a pedido) que lo RECORRE con el scroll.
  *
  * Composición "cuentas en un hilo": la acuarela de cada momento va justo en
  * la vuelta del camino (20% / 80% del ancho, donde la curva es vertical) y
@@ -86,7 +86,9 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
     const p = path.getPointAtLength(
       path.getTotalLength() * Math.min(1, Math.max(0, progress)),
     );
-    heart.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`;
+    // La flor además gira mientras avanza (una vuelta y media en todo el
+    // recorrido): se lee como "rodando" por el camino.
+    heart.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%) rotate(${progress * 540}deg)`;
   };
   useMotionValueEvent(scrollYProgress, "change", placeHeart);
   // Posición inicial, y de nuevo cuando cambia el ancho (redibuja el path).
@@ -217,15 +219,21 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
             );
           })}
 
-          {/* Corazón que recorre el camino (encima de las acuarelas). */}
+          {/* Flor dorada que recorre el camino (encima de las acuarelas). */}
           {width > 0 && (
             <div
               ref={heartRef}
               aria-hidden="true"
-              className="absolute top-0 left-0 z-20 w-8 h-8 rounded-full flex items-center justify-center shadow-md will-change-transform"
-              style={{ backgroundColor: colors.paper }}
+              className="absolute top-0 left-0 z-20 w-11 h-11 md:w-12 md:h-12 will-change-transform"
+              style={{ filter: "drop-shadow(0 3px 5px rgba(59,47,32,0.3))" }}
             >
-              <Heart size={15} fill={colors.accent} stroke={colors.accent} />
+              <Image
+                src={trimmedAsset(ASSETS.florDorada, 150)}
+                alt=""
+                fill
+                sizes="48px"
+                className="object-contain"
+              />
             </div>
           )}
         </div>

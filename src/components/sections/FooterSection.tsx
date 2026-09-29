@@ -66,7 +66,7 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
   const { colors } = config.theme;
 
   return (
-    <footer className="relative pt-10 pb-5 px-6 flex flex-col items-center overflow-hidden">
+    <footer className="relative pt-5 pb-5 px-6 flex flex-col items-center overflow-hidden">
       <div className="relative z-10 flex flex-col items-center text-center w-full px-4">
         <div className="flex items-center gap-4 mb-1.5">
           <div
@@ -94,12 +94,18 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
         >
           {config.client.name}
         </h2>
+        <p
+          className="font-sans text-xs tracking-[0.3em] font-light mt-4 mb-4 uppercase max-w-sm"
+          style={{ color: colors.ink, opacity: 0.7 }}
+        >
+          Vive la experiencia por ti mismo.
+        </p>
       </div>
 
       {/* Imagen de cierre (`visuals.footerImage`), antes de la tarjeta de
           contacto. Opcional: sin ella, el footer queda como antes. */}
       {config.visuals.footerImage && (
-        <div className="relative z-10 w-48 h-64 md:w-60 md:h-80 mt-6">
+        <div className="relative z-10 w-48 h-64 md:w-60 md:h-80 mt-2">
           {/* Capa del jardín: el DOBLE de ancho que la foto (centrada), así
               los ramos tienen lugar a los costados -- el `mask-image` recorta
               todo lo que queda fuera de la caja del wrapper, por eso no puede
@@ -130,12 +136,6 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
           />
         </div>
       )}
-      <p
-        className="font-sans text-xs tracking-[0.3em] font-light mt-4 mb-4 uppercase max-w-sm"
-        style={{ color: colors.ink, opacity: 0.7 }}
-      >
-        Vive la experiencia por ti mismo.
-      </p>
 
       {/* Firma / tarjeta de contacto */}
       <div

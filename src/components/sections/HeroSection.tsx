@@ -99,17 +99,18 @@ export function HeroSection({
 
       {/* Escalera: escenario, corrida a la izquierda y un poco por debajo
           del borde (la base queda recortada) para dejar el lado derecho a
-          la vela y el paraguas. */}
+          la vela y el paraguas. z-31: por ENCIMA de la cortina (z-30), por
+          debajo del candelabro (z-35) y del retrato (z-40). */}
       <motion.div
         {...reveal(0.2, { x: 40, y: 40 })}
-        className="absolute -bottom-[1%] left-[22%] -translate-x-1/2 z-10 w-[82vw] max-w-[520px] aspect-square pointer-events-none"
+        className="absolute -bottom-[1%] left-[22%] -translate-x-1/2 z-[31] w-[65vw] max-w-[520px] aspect-square pointer-events-none"
       >
         <Image
           src={T(ASSETS.escaleras)}
           alt=""
           fill
           loading="eager"
-          sizes="(max-width: 768px) 82vw, 520px"
+          sizes="(max-width: 768px) 65vw, 520px"
           className="object-contain object-bottom"
         />
       </motion.div>
@@ -160,7 +161,7 @@ export function HeroSection({
             type: "spring",
             bounce: 0.2,
           }}
-          className="relative w-[92vw] max-w-[370px] md:max-w-[500px] aspect-[250/338] flex flex-col items-center justify-center"
+          className="relative w-[76vw] max-w-[300px] md:w-[92vw] md:max-w-[500px] aspect-[250/338] flex flex-col items-center justify-center"
         >
           {/* Fondo del óvalo: crema translúcido para que el nombre se lea
               sobre la escalera/candelabro que quedan detrás. */}
@@ -176,7 +177,7 @@ export function HeroSection({
               nombre se siga leyendo encima. */}
           <span
             aria-hidden="true"
-            className="absolute inset-0 flex items-center justify-center font-display font-semibold text-[170px] md:text-[230px] leading-none select-none pointer-events-none"
+            className="absolute inset-0 flex items-center justify-center font-display font-semibold text-[140px] md:text-[230px] leading-none select-none pointer-events-none"
             style={{ color: colors.gold, opacity: 0.35 }}
           >
             XV
@@ -186,7 +187,7 @@ export function HeroSection({
             alt=""
             fill
             loading="eager"
-            sizes="(max-width: 768px) 370px, 500px"
+            sizes="(max-width: 768px) 300px, 500px"
             className="object-contain"
             style={{ filter: "drop-shadow(0 10px 18px rgba(59,47,32,0.25))" }}
           />
@@ -197,7 +198,7 @@ export function HeroSection({
             {config.client.eventType}
           </span>
           <h1
-            className="relative font-pinyon-script text-[90px] md:text-[98px] leading-none"
+            className="relative font-pinyon-script text-[70px] md:text-[98px] leading-none"
             style={{
               color: colors.accent,
               textShadow: "0 3px 10px rgba(59,47,32,0.18)",

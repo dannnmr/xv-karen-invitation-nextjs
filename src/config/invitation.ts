@@ -181,6 +181,7 @@ export const ASSETS = {
   cisnes: A("v1790662221/gansos_efo8g9.webp"),
   corazonEncaje: A("v1790660166/corazon_encaje_g1ywwm.webp"),
   rectanguloEncaje: A("v1790660165/rectangulo_encaje_i5e6br.webp"),
+  florDorada: A("v1790552764/flor_dorada_fi3ego.webp"), // recorre el itinerario
 } as const;
 
 export const invitationConfig: InvitationConfig = {
@@ -349,7 +350,7 @@ export const invitationConfig: InvitationConfig = {
     locationSideImage: ASSETS.realezaImage,
     footerImage: ASSETS.cisnes,
     rsvpFrame: ASSETS.rectanguloEncaje,
-    giftEnvelope: ASSETS.manoTarjeta,
+    giftEnvelope: A("v1790715811/sobre_iy6bs8.webp"),
   },
   rsvp: {
     // PENDIENTE: fecha límite -- default 1 semana antes del evento.
