@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-display: var(--font-cormorant);
+  --font-script: var(--font-great-vibes);
+  --font-sans: var(--font-poppins);
+  --font-mono: var(--font-dm-mono);
+  /* Cursiva puntual de Hero/Footer/Pase (`font-pinyon-script`), distinta
+     de `font-script` (Great Vibes) que usa el resto de la invitación --
+     mismo sistema que xv-andrea-carolina. */
+  --font-pinyon-script: var(--font-pinyon);
+}
+
+/* Sincronizado con theme.colors.primary de src/config/invitation.ts --
+   fondo base del <body> (evita un flash de fondo claro antes de que cada
+   sección aplique su color inline). `--foreground` es un fallback general
+   para texto sin estilo propio, no lo usa ninguna sección directamente. */
+@layer base {
+  :root {
+    --background: #f7f1e3;
+    --foreground: #241412;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  33% { transform: translate3d(0, -10px, 0) rotate(2deg); }
+  66% { transform: translate3d(0, 6px, 0) rotate(-2deg); }
+}
+
+.animate-float-slow {
+  animation: float 6.5s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float 4.5s ease-in-out infinite;
+}
+
+/* Oscilación continua de rotación (inspirada en el sway sutil de las
+   decoraciones del Hero de abril/P3) -- vive en su propio elemento
+   (nunca junto con .animate-float-*) para que las dos animaciones no se
+   pisen: cada una anima su propio `transform`. */
+@keyframes sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+.animate-sway {
+  animation: sway 4s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+/* Shimmer plateado/rosado del numeral "XV" del Hero -- réplica del efecto
+   de Luciana/P2 (gradiente de texto animado vía background-position, no
+   un color sólido con contorno). */
+@keyframes shimmer-xv {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-xv {
+  animation: shimmer-xv 6s linear infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.04); opacity: 0.9; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3.5s ease-in-out infinite;
+}
+
+/* Giro lento y continuo -- bola de disco de fondo en Countdown. CSS puro
+   (compositor-only, transform), no necesita gating por `useInView` como
+   las animaciones infinitas de Framer Motion (esas sí corren en el hilo
+   principal); igual queda cubierta por la regla de `prefers-reduced-motion`
+   de más abajo. */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 40s linear infinite;
+}
+
+/* Accesibilidad: patrón conservado de la referencia (único hallazgo de
+   Proyecto 4 marcado explícitamente como "conservar"). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
