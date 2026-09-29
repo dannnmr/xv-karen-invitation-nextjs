@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Flower2, MailOpen } from "lucide-react";
 import Image from "next/image";
 import { trimmedAsset } from "@/components/ui/LaceFrame";
-import type { InvitationConfig } from "@/config/invitation";
+import { ASSETS, type InvitationConfig } from "@/config/invitation";
 
 interface EnvelopeScreenProps {
   isOpen: boolean;
@@ -185,7 +185,9 @@ export function EnvelopeScreen({
           devuelve a su lugar como una cuerda con peso. */}
       {envelope?.pullCord && (
         <motion.div
-          className="absolute top-0 right-[9%] md:right-[14%] z-30 flex flex-col items-center"
+          // `right-[12%]` en móvil: la cartela del texto es más ancha que la
+          // cuerda y, más pegada al borde, se salía de la pantalla.
+          className="absolute top-0 right-[12%] md:right-[14%] z-30 flex flex-col items-center"
           initial={{ y: 0, opacity: 1 }}
           animate={
             isOpening
@@ -209,7 +211,9 @@ export function EnvelopeScreen({
             animate={isOpening ? { rotate: 0 } : { rotate: [-1.5, 1.5, -1.5] }}
             transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
             style={{ transformOrigin: "top center", touchAction: "none" }}
-            className="relative w-16 h-[34vh] md:h-[52vh] cursor-grab active:cursor-grabbing"
+            // Cuerda corta (antes 34vh / 52vh): larga llegaba casi al medio
+            // de la pantalla y el "tirón" se perdía.
+            className="relative w-16 h-[22vh] md:h-[30vh] cursor-grab active:cursor-grabbing"
           >
             {/* El asset es un lienzo ancho (500x587) con una cuerda finita en
                 el centro: sin recortar, `object-contain` en un botón angosto
@@ -231,10 +235,14 @@ export function EnvelopeScreen({
                 exit={{ opacity: 0 }}
                 animate={{ y: [0, 5, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity }}
-                className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.25em] px-2.5 py-1 rounded-full whitespace-nowrap"
+                // Texto sobre la cartela ornamental (821x320 recortada, la
+                // misma de Padres): el padding deja el texto en su zona lisa.
+                className="-mt-1 flex items-center justify-center w-[150px] md:w-[180px] aspect-[821/320] font-mono text-[0.58rem] md:text-[0.65rem] font-semibold uppercase tracking-[0.2em] whitespace-nowrap drop-shadow-md"
                 style={{
                   color: colors.accent,
-                  backgroundColor: "rgba(255,253,248,0.9)",
+                  backgroundImage: `url("${trimmedAsset(ASSETS.cartela, 400)}")`,
+                  backgroundSize: "100% 100%",
+                  backgroundRepeat: "no-repeat",
                 }}
               >
                 Jala la cuerda

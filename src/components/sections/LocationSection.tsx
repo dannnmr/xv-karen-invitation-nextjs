@@ -57,7 +57,7 @@ export function LocationSection({ config }: { config: InvitationConfig }) {
             whileInView={{ opacity: 0.9, scale: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute bottom-[-8%] right-[-20%] w-[60%] aspect-square md:bottom-auto md:top-[5%] md:right-[-25%] md:w-[90%] md:max-w-175 md:h-[90%] md:aspect-auto pointer-events-none z-0"
+            className="absolute bottom-[-8%] right-[-40%] w-[90%] aspect-square md:bottom-auto md:top-[5%] md:right-[-25%] md:w-[90%] md:max-w-175 md:h-[90%] md:aspect-auto pointer-events-none z-0"
           >
             <Image
               src={config.visuals.locationSideImage}
