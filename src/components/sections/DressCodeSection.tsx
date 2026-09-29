@@ -14,7 +14,7 @@ import type { DecorationSpec, InvitationConfig } from "@/config/invitation";
 // ESCONDIDO detrás de la tarjeta (parece que el ramo sale de atrás) y el
 // recorte inferior tapado por el borde de la sección. En móvil la tarjeta
 // ocupa todo el ancho: quedaban casi enteros detrás de ella, turbios -> ahí
-// alcanza con la flor del hombro del arco. Sin animación (tiene tallos).
+// alcanza con la flor del hombro del arco. Sin animación
 const LILIES = ""; // sin decoración lateral (vacío = no se dibuja)
 
 // Flor suelta (flor2) en la esquina superior derecha de la tarjeta: la
