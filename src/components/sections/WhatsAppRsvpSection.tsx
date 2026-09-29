@@ -44,12 +44,15 @@ export function WhatsAppRsvpSection({ config }: { config: InvitationConfig }) {
 
   return (
     <section className="relative py-20 px-6 flex flex-col items-center overflow-hidden">
-      <div className="relative w-full max-w-md">
+      {/* En móvil el encaje es más ancho que la pantalla (el overflow de la
+          sección recorta los bordes de encaje) para que la zona lisa tenga
+          espacio para el formulario. */}
+      <div className="relative w-[112vw] max-w-[560px] shrink-0">
         {/* Corazón de encaje asomando por detrás del marco (arriba a la
             derecha), inclinado. */}
         <div
           aria-hidden="true"
-          className="absolute -top-14 -right-8 md:-right-24 w-[130px] h-[118px] md:w-[170px] md:h-[154px] rotate-12 pointer-events-none"
+          className="absolute -top-14 right-[6%] md:-right-16 w-[130px] h-[118px] md:w-[170px] md:h-[154px] rotate-12 pointer-events-none"
         >
           <Image
             src={trimmedAsset(ASSETS.corazonEncaje, 400)}
@@ -62,7 +65,12 @@ export function WhatsAppRsvpSection({ config }: { config: InvitationConfig }) {
 
         <LaceFrame
           src={config.visuals.rsvpFrame}
-          padding="15% 13% 13%"
+          // Zona lisa del asset (500x613): 16-82% del ancho, 16.6-83.3% del
+          // alto. Con el aspect ratio fijo, el borde vertical (~20% del alto)
+          // equivale a ~20% del ANCHO, que es la base del padding en %.
+          // Si el contenido no entra, el aspect ratio cede y el marco crece.
+          padding="22% 20% 22% 18%"
+          className="aspect-[500/613] flex flex-col justify-center"
           fallbackColor={colors.paper}
         >
           <SectionHeader
@@ -70,7 +78,7 @@ export function WhatsAppRsvpSection({ config }: { config: InvitationConfig }) {
             title="Confirma tu asistencia"
             colors={colors}
             className="mb-4"
-            titleClassName="text-[2.4rem] md:text-[3rem] leading-[0.95]"
+            titleClassName="text-[2.2rem] md:text-[3rem] leading-[0.95]"
           />
           <p
             className="font-sans text-[0.65rem] md:text-xs tracking-[0.12em] uppercase mb-6 text-center"

@@ -9,8 +9,8 @@ import { ASSETS, type InvitationConfig } from "@/config/invitation";
 /**
  * Hero de Karen: un "escenario" barroco con los 7 assets que la clienta
  * pidió sí o sí, cada uno ubicado según su forma real:
- *  - Cortinas drapeadas (cortina) en las dos esquinas superiores (la
- *    izquierda espejada): enmarcan la escena como un telón.
+ *  - Cortina drapeada (cortina) a todo el ancho arriba: enmarca la escena
+ *    como un telón.
  *  - Candelabro colgando del borde superior al centro, con un balanceo leve.
  *  - Marco oval dorado (cuadro dorado) = retrato: el nombre va DENTRO.
  *  - Escalera de palacio como base/escenario, anclada abajo al centro.
@@ -50,35 +50,22 @@ export function HeroSection({
       ref={sectionRef}
       className="relative min-h-svh w-full overflow-hidden"
     >
-      {/* Cortinas: la izquierda espejada. Por encima de todo lo demás
-          (enmarcan la escena como un telón). */}
+      {/* Cortina: más ancha que la pantalla (anclada a la derecha, sobra
+          por la izquierda y la recorta el overflow de la sección) para que
+          no asome el fondo. Por encima de todo lo demás (telón). `max-h`
+          evita que en desktop cubra la pantalla entera; ahí `object-cover`
+          recorta desde arriba. */}
       <motion.div
         {...reveal(0.1, { y: -30 })}
-        className="absolute top-0 left-0 z-30 w-[56vw] max-w-[440px] aspect-[484/505] pointer-events-none"
-        // `scaleX` como valor de Framer (no `transform: "scaleX(-1)"`): la
-        // animación de entrada arma su propio transform y pisaría el string.
-        style={{ scaleX: -1 }}
+        className="absolute -top-10 -right-10 z-30 w-[125vw] max-h-[80svh] aspect-[484/505] pointer-events-none"
       >
         <Image
           src={T(ASSETS.cortina)}
           alt=""
           fill
           loading="eager"
-          sizes="(max-width: 768px) 56vw, 440px"
-          className="object-contain object-top"
-        />
-      </motion.div>
-      <motion.div
-        {...reveal(0.1, { y: -30 })}
-        className="absolute top-0 right-0 z-30 w-[56vw] max-w-[440px] aspect-[484/505] pointer-events-none"
-      >
-        <Image
-          src={T(ASSETS.cortina)}
-          alt=""
-          fill
-          loading="eager"
-          sizes="(max-width: 768px) 56vw, 440px"
-          className="object-contain object-top"
+          sizes="125vw"
+          className="object-cover object-top-right"
         />
       </motion.div>
 
@@ -86,9 +73,8 @@ export function HeroSection({
           cadena (origen arriba). */}
       <motion.div
         {...reveal(0.3, { y: -60 })}
-        // Por ENCIMA de las cortinas (z-35): en móvil las dos cortinas se
-        // juntan al centro y lo tapaban.
-        className="absolute top-0 left-1/2 -translate-x-1/2 z-[35] pointer-events-none"
+        // Por ENCIMA de la cortina (z-35): a todo el ancho lo taparía.
+        className="absolute -top-10 left-1/2 -translate-x-1/2 z-[35] pointer-events-none"
       >
         <motion.div
           animate={inView ? { rotate: [-1.5, 1.5, -1.5] } : { rotate: 0 }}
@@ -98,7 +84,7 @@ export function HeroSection({
               : { duration: 0 }
           }
           style={{ transformOrigin: "top center" }}
-          className="relative w-[112px] h-[134px] md:w-[210px] md:h-[252px]"
+          className="relative w-[222px] h-[244px] md:w-[210px] md:h-[252px]"
         >
           <Image
             src={T(ASSETS.candelabro)}
@@ -111,10 +97,12 @@ export function HeroSection({
         </motion.div>
       </motion.div>
 
-      {/* Escalera: escenario, anclada abajo al centro. */}
+      {/* Escalera: escenario, corrida a la izquierda y un poco por debajo
+          del borde (la base queda recortada) para dejar el lado derecho a
+          la vela y el paraguas. */}
       <motion.div
-        {...reveal(0.2, { y: 40 })}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 w-[82vw] max-w-[520px] aspect-square pointer-events-none"
+        {...reveal(0.2, { x: 40, y: 40 })}
+        className="absolute -bottom-[1%] left-[22%] -translate-x-1/2 z-10 w-[82vw] max-w-[520px] aspect-square pointer-events-none"
       >
         <Image
           src={T(ASSETS.escaleras)}
@@ -128,20 +116,8 @@ export function HeroSection({
 
       {/* Ornamentos dorados en las esquinas inferiores (el asset ES una
           esquina: vértice abajo-izquierda). */}
-      <div className="absolute bottom-0 left-0 z-20 w-[34vw] max-w-[260px] aspect-[500/512] pointer-events-none">
-        <Image
-          src={ASSETS.borde}
-          alt=""
-          fill
-          loading="eager"
-          sizes="(max-width: 768px) 34vw, 260px"
-          className="object-contain object-left-bottom"
-        />
-      </div>
-      <div
-        className="absolute bottom-0 right-0 z-20 w-[34vw] max-w-[260px] aspect-[500/512] pointer-events-none"
-        style={{ transform: "scaleX(-1)" }}
-      >
+
+      <div className="absolute -bottom-5 -right-6 z-1  w-[94vw] max-w-[260px] aspect-[500/512] pointer-events-none">
         <Image
           src={ASSETS.borde}
           alt=""
@@ -152,25 +128,13 @@ export function HeroSection({
         />
       </div>
 
-      {/* Vela (izquierda) y paraguas (derecha), apoyados junto a la
-          escalera. */}
-      <motion.div
-        {...reveal(0.5, { x: -20 })}
-        className="absolute z-20 left-[5%] md:left-[18%] bottom-[16%] md:bottom-[10%] w-[64px] h-[136px] md:w-[100px] md:h-[212px] pointer-events-none"
-      >
-        <Image
-          src={T(ASSETS.vela)}
-          alt=""
-          fill
-          loading="eager"
-          sizes="(max-width: 768px) 64px, 100px"
-          className="object-contain object-bottom"
-        />
-      </motion.div>
+      {/* Vela y paraguas, los dos del lado derecho de la escalera (la vela
+          más adentro, el paraguas contra el borde). */}
+
       <motion.div
         {...reveal(0.5, { x: 20 })}
-        className="absolute z-20 right-[2%] md:right-[16%] bottom-[14%] md:bottom-[9%] w-[120px] h-[124px] md:w-[190px] md:h-[196px] pointer-events-none"
-        style={{ rotate: "12deg" }}
+        className="absolute z-20 -right-[2%] md:right-[16%] bottom-[4%] md:bottom-[9%] w-[180px] h-[184px] md:w-[190px] md:h-[196px] pointer-events-none"
+        style={{ rotate: "-65deg" }}
       >
         <Image
           src={T(ASSETS.paraguas)}
@@ -196,7 +160,7 @@ export function HeroSection({
             type: "spring",
             bounce: 0.2,
           }}
-          className="relative w-[250px] h-[338px] md:w-[340px] md:h-[460px] flex flex-col items-center justify-center"
+          className="relative w-[92vw] max-w-[370px] md:max-w-[500px] aspect-[250/338] flex flex-col items-center justify-center"
         >
           {/* Fondo del óvalo: crema translúcido para que el nombre se lea
               sobre la escalera/candelabro que quedan detrás. */}
@@ -207,23 +171,33 @@ export function HeroSection({
               background: `radial-gradient(ellipse, ${colors.paper}f2 55%, ${colors.paper}c0 100%)`,
             }}
           />
+          {/* "XV" de fondo, detrás del nombre: dorado liso (sin gradiente ni
+              animación, a pedido: que no brille). Translúcido para que el
+              nombre se siga leyendo encima. */}
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 flex items-center justify-center font-display font-semibold text-[170px] md:text-[230px] leading-none select-none pointer-events-none"
+            style={{ color: colors.gold, opacity: 0.35 }}
+          >
+            XV
+          </span>
           <Image
             src={T(ASSETS.cuadroDorado)}
             alt=""
             fill
             loading="eager"
-            sizes="(max-width: 768px) 250px, 340px"
+            sizes="(max-width: 768px) 370px, 500px"
             className="object-contain"
             style={{ filter: "drop-shadow(0 10px 18px rgba(59,47,32,0.25))" }}
           />
           <span
-            className="relative font-mono text-[0.6rem] md:text-xs uppercase tracking-[0.35em] mb-1"
+            className="relative font-mono text-[0.7rem] md:text-sm uppercase tracking-[0.35em] mb-1"
             style={{ color: colors.accent }}
           >
             {config.client.eventType}
           </span>
           <h1
-            className="relative font-pinyon-script text-[54px] md:text-[78px] leading-none"
+            className="relative font-pinyon-script text-[90px] md:text-[98px] leading-none"
             style={{
               color: colors.accent,
               textShadow: "0 3px 10px rgba(59,47,32,0.18)",
@@ -232,7 +206,7 @@ export function HeroSection({
             {config.client.name}
           </h1>
           <span
-            className="relative font-display italic text-sm md:text-base mt-1"
+            className="relative font-display italic text-base md:text-lg mt-1"
             style={{ color: colors.ink, opacity: 0.75 }}
           >
             {config.event.date.toLocaleDateString("es-ES", {

@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { CalendarPlus, Heart } from "lucide-react";
 import { getCalendarLinks } from "@/lib/calendar";
 import { DecorationField } from "@/components/ui/DecorationField";
+import { trimmedAsset } from "@/components/ui/LaceFrame";
 import {
   ASSETS,
   type DecorationSpec,
@@ -51,6 +53,10 @@ const DECOR_DESKTOP = [
  * fusionado dentro del pase (TicketSection) -- el pase ahora es una sección
  * aparte, después de Regalos.
  * Sin el telón de flores de antonella (asset de esa clienta).
+ * Karen: todo va escrito sobre la tarjeta de la mano con guante
+ * (manoTarjeta, la misma ilustración de "Lluvia de sobres"). La tarjeta es
+ * apaisada y baja, así que se quitó el título "Mes, año" repetido (ya
+ * figura en la fecha) y los tamaños van en `cqw` de la tarjeta.
  */
 export function SaveTheDateSection({ config }: { config: InvitationConfig }) {
   const { colors } = config.theme;
@@ -103,137 +109,140 @@ export function SaveTheDateSection({ config }: { config: InvitationConfig }) {
   });
 
   return (
-    <section className="relative flex flex-col items-center justify-center pt-16 pb-32 md:pb-16 px-6 overflow-hidden">
+    <section className="relative flex flex-col items-center justify-center pt-12 pb-10 px-6 overflow-hidden">
       <DecorationField
         decorations={DECOR_MOBILE}
         colors={colors}
         wrapperClassName="absolute inset-0 pointer-events-none z-0 md:hidden"
       />
 
-      <div className="relative z-10 w-full max-w-lg mx-auto flex flex-col items-center">
+      {/* Todo el contenido va SOBRE la tarjeta que sostiene la mano
+          (manoTarjeta, 862x1436 recortada). Solo se muestra el 55% de
+          arriba del dibujo (tarjeta + dedos), desvanecido hacia abajo: la
+          mano entera hacía la sección enorme. */}
+      <div className="relative z-10 w-[80vw] max-w-[360px] aspect-[862/790] shrink-0">
         <DecorationField
           decorations={DECOR_DESKTOP}
           colors={colors}
           wrapperClassName="absolute inset-0 pointer-events-none -z-10 hidden md:block"
         />
-        <p
-          className="font-mono text-xs uppercase tracking-[0.4em] mb-4"
-          style={{ color: colors.accent }}
-        >
-          Cuándo
-        </p>
-        <div
-          className="flex items-end justify-center gap-3 mb-4"
-          style={{ color: colors.accent }}
-        >
-          <span className="font-sans text-6xl md:text-7xl font-bold tracking-tighter leading-[0.8]">
-            {day}
-          </span>
-          <div className="flex flex-col items-start pb-1">
-            <span className="font-sans text-base md:text-xl uppercase tracking-[0.2em] font-light capitalize">
-              {monthName}
-            </span>
-            <span className="font-sans text-[0.55rem] md:text-xs tracking-[0.5em] font-bold opacity-80">
-              {year}
-            </span>
-          </div>
-          <div
-            className="w-px h-10 md:h-14 mx-2"
-            style={{
-              background: `linear-gradient(to bottom, transparent, ${colors.accent}40, transparent)`,
-            }}
-          />
-          <span className="font-script text-3xl md:text-4xl whitespace-nowrap">
-            {config.event.startTime}
-          </span>
-        </div>
-
-        <div
-          className="w-16 h-px my-6"
-          style={{ backgroundColor: `${colors.accent}30` }}
+        <Image
+          src={trimmedAsset(ASSETS.manoTarjeta, 900)}
+          alt=""
+          fill
+          sizes="(max-width: 768px) 80vw, 360px"
+          className="object-cover object-top"
+          style={{
+            maskImage: "linear-gradient(to bottom, #000 72%, transparent)",
+            WebkitMaskImage: "linear-gradient(to bottom, #000 72%, transparent)",
+          }}
         />
 
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="font-script text-4xl md:text-5xl text-center"
-          style={{ color: colors.accent }}
-        >
-          {monthName}, {year}
-        </motion.h2>
+        {/* Zona útil de la tarjeta (medida sobre el asset completo): 0-96.5%
+            del ancho y 0-34.5% del alto, con el pulgar asomando desde ~30%
+            -> sobre el 55% visible: top 4.5%, alto 50%.
+            `@container`: los tamaños van en `cqw` y escalan con la tarjeta. */}
+        <div className="@container absolute left-[4%] w-[88%] top-[4.5%] h-[50%] flex flex-col items-center justify-center">
+          <p
+            className="font-mono text-[3.4cqw] uppercase tracking-[0.4em] mb-[2cqw]"
+            style={{ color: colors.accent }}
+          >
+            Cuándo
+          </p>
+          <div
+            className="flex items-end justify-center gap-[2.5cqw] mb-[3cqw]"
+            style={{ color: colors.accent }}
+          >
+            <span className="font-sans text-[13cqw] font-bold tracking-tighter leading-[0.8]">
+              {day}
+            </span>
+            <div className="flex flex-col items-start pb-[0.5cqw]">
+              <span className="font-sans text-[4.6cqw] uppercase tracking-[0.2em] font-light capitalize">
+                {monthName}
+              </span>
+              <span className="font-sans text-[2.4cqw] tracking-[0.5em] font-bold opacity-80">
+                {year}
+              </span>
+            </div>
+            <div
+              className="w-px h-[10cqw] mx-[1.5cqw]"
+              style={{
+                background: `linear-gradient(to bottom, transparent, ${colors.accent}40, transparent)`,
+              }}
+            />
+            <span className="font-script text-[8cqw] whitespace-nowrap">
+              {config.event.startTime}
+            </span>
+          </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex justify-center items-end gap-2 md:gap-4 mt-8 w-full"
-        >
-          {daysOfWeek.map((d, i) => {
-            const isTarget = i === 3;
-            const dayName = d
-              .toLocaleDateString("es-ES", { weekday: "short" })
-              .slice(0, 2)
-              .toLowerCase();
-            return (
-              <div key={i} className="flex flex-col items-center relative">
-                <span
-                  className="font-serif text-xs md:text-base mb-2"
-                  style={{ color: colors.ink, opacity: 0.6 }}
-                >
-                  {dayName}
-                </span>
-                <div className="relative flex items-center justify-center w-9 h-9 md:w-14 md:h-14">
-                  {isTarget ? (
-                    <>
-                      <Heart
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 md:w-20 md:h-20 fill-current drop-shadow-md"
-                        style={{ color: colors.accent }}
-                        strokeWidth={0}
-                      />
-                      <span className="relative z-10 font-serif text-xl md:text-3xl text-white font-medium">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex justify-center items-end gap-[3cqw] w-full"
+          >
+            {daysOfWeek.map((d, i) => {
+              const isTarget = i === 3;
+              const dayName = d
+                .toLocaleDateString("es-ES", { weekday: "short" })
+                .slice(0, 2)
+                .toLowerCase();
+              return (
+                <div key={i} className="flex flex-col items-center relative">
+                  <span
+                    className="font-serif text-[3.4cqw] mb-[1.2cqw]"
+                    style={{ color: colors.ink, opacity: 0.6 }}
+                  >
+                    {dayName}
+                  </span>
+                  <div className="relative flex items-center justify-center w-[8.5cqw] h-[8.5cqw]">
+                    {isTarget ? (
+                      <>
+                        <Heart
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[13cqw] h-[13cqw] fill-current drop-shadow-md"
+                          style={{ color: colors.accent }}
+                          strokeWidth={0}
+                        />
+                        <span className="relative z-10 font-serif text-[5.6cqw] text-white font-medium">
+                          {d.getDate()}
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        className="font-serif text-[5cqw] font-medium"
+                        style={{ color: colors.ink, opacity: 0.75 }}
+                      >
                         {d.getDate()}
                       </span>
-                    </>
-                  ) : (
-                    <span
-                      className="font-serif text-lg md:text-2xl font-medium"
-                      style={{ color: colors.ink, opacity: 0.75 }}
-                    >
-                      {d.getDate()}
-                    </span>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </motion.div>
+              );
+            })}
+          </motion.div>
 
-        <motion.button
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          onClick={handleAddToCalendar}
-          whileHover={{ y: -4 }}
-          whileTap={{ scale: 0.97 }}
-          className="group flex items-center gap-3 px-8 py-3 rounded-full border-[1.5px] mt-10 shadow-md hover:shadow-lg transition-shadow duration-300"
-          style={{
-            backgroundColor: "transparent",
-            borderColor: colors.accent,
-            color: colors.accent,
-          }}
-        >
-          <CalendarPlus
-            size={18}
-            className="transition-transform group-hover:scale-110"
-          />
-          <span className="font-serif italic tracking-wide text-sm md:text-base">
-            Agendar en calendario
-          </span>
-        </motion.button>
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            onClick={handleAddToCalendar}
+            whileHover={{ y: -4 }}
+            whileTap={{ scale: 0.97 }}
+            className="group flex items-center gap-[2cqw] px-[6cqw] py-[2cqw] rounded-full border-[1.5px] mt-[4cqw] shadow-md hover:shadow-lg transition-shadow duration-300"
+            style={{
+              backgroundColor: "transparent",
+              borderColor: colors.accent,
+              color: colors.accent,
+            }}
+          >
+            <CalendarPlus className="w-[4.4cqw] h-[4.4cqw] transition-transform group-hover:scale-110" />
+            <span className="font-serif italic tracking-wide text-[3.8cqw]">
+              Agendar en calendario
+            </span>
+          </motion.button>
+        </div>
       </div>
     </section>
   );

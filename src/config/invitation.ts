@@ -268,7 +268,12 @@ export const invitationConfig: InvitationConfig = {
       description: "Locos por Cristo",
       image: A("v1790662221/copa_gmgpm8.webp"),
     },
-    { time: "00:00", title: "Torta", description: "Partimos la torta juntos" },
+    {
+      time: "00:00",
+      title: "Torta",
+      description: "Partimos la torta juntos",
+      image: A("v1790705058/torta_jnrngc.webp"),
+    },
     {
       time: "01:00",
       title: "Bye bye",
@@ -290,12 +295,18 @@ export const invitationConfig: InvitationConfig = {
   },
   giftRegistry: {
     message:
-      "Tu presencia es mi mejor regalo. Si deseas tener un detalle conmigo, aquí te dejo algunas ideas, o puedes sumarte a la lluvia de sobres.",
+      "Tu presencia es mi mejor regalo. Si deseas tener un detalle conmigo, aquí te dejo algunas ideas",
     preferences: [
-      { label: "Ropa talla S" },
-      { label: "Carteras" },
-      { label: "Bijutería dorada" },
-      { label: "Perfumes dulces" },
+      { label: "Ropa talla S", image: A("v1790707330/ropa_scs9fr.webp") },
+      { label: "Carteras", image: A("v1790707065/cartera_oowwfr.webp") },
+      {
+        label: "Bijutería dorada",
+        image: A("v1790707065/bijuteria_dqrknu.webp"),
+      },
+      {
+        label: "Perfumes dulces",
+        image: A("v1790707064/perfume_qvzb96.webp"),
+      },
     ],
   },
   music: {
