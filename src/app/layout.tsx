@@ -53,7 +53,7 @@ const pinyonScript = Pinyon_Script({
 // Dominio SUPUESTO por la convención de las demás invitaciones
 // (xv-luciana-invitation) -- PENDIENTE confirmar con Daniela antes de
 // publicar: un dominio equivocado deja el preview de WhatsApp sin imagen.
-const siteUrl = "https://xv-karen-invitation.danmr.com";
+const siteUrl = "https://karen-xv-invitation.danmr.com";
 const title = "Karen — Mis XV Años";
 const description =
   "Entre el encanto de una época dorada y la magia de un sueño hecho realidad: te invito a celebrar mis quince años el 24 de octubre.";
