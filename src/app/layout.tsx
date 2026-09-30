@@ -50,9 +50,9 @@ const pinyonScript = Pinyon_Script({
   display: "swap",
 });
 
-// Dominio SUPUESTO por la convención de las demás invitaciones
-// (xv-luciana-invitation) -- PENDIENTE confirmar con Daniela antes de
-// publicar: un dominio equivocado deja el preview de WhatsApp sin imagen.
+// Dominio de producción (confirmado). Tiene que coincidir con el real: de
+// acá salen las URLs absolutas de og:image, y uno equivocado deja el
+// preview de WhatsApp sin imagen.
 const siteUrl = "https://karen-xv-invitation.danmr.com";
 const title = "Karen — Mis XV Años";
 const description =
