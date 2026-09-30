@@ -74,7 +74,7 @@ export function HeroSection({
       <motion.div
         {...reveal(0.3, { y: -60 })}
         // Por ENCIMA de la cortina (z-35): a todo el ancho lo taparía.
-        className="absolute -top-10 left-1/2 -translate-x-1/2 z-[35] pointer-events-none"
+        className="absolute -top-16 left-1/2 -translate-x-1/2 z-[35] pointer-events-none"
       >
         <motion.div
           animate={inView ? { rotate: [-1.5, 1.5, -1.5] } : { rotate: 0 }}
@@ -84,14 +84,14 @@ export function HeroSection({
               : { duration: 0 }
           }
           style={{ transformOrigin: "top center" }}
-          className="relative w-[222px] h-[244px] md:w-[210px] md:h-[252px]"
+          className="relative w-[180px] h-[198px] md:w-[180px] md:h-[216px]"
         >
           <Image
             src={T(ASSETS.candelabro)}
             alt=""
             fill
             loading="eager"
-            sizes="(max-width: 768px) 150px, 230px"
+            sizes="180px"
             className="object-contain object-top"
           />
         </motion.div>
@@ -103,7 +103,7 @@ export function HeroSection({
           debajo del candelabro (z-35) y del retrato (z-40). */}
       <motion.div
         {...reveal(0.2, { x: 40, y: 40 })}
-        className="absolute -bottom-[1%] left-[22%] -translate-x-1/2 z-[31] w-[65vw] max-w-[520px] aspect-square pointer-events-none"
+        className="absolute -bottom-[7%] left-[20%] -translate-x-1/2 z-[31] w-[60vw] max-w-[520px] aspect-square pointer-events-none"
       >
         <Image
           src={T(ASSETS.escaleras)}
@@ -118,13 +118,13 @@ export function HeroSection({
       {/* Ornamentos dorados en las esquinas inferiores (el asset ES una
           esquina: vértice abajo-izquierda). */}
 
-      <div className="absolute -bottom-5 -right-6 z-1  w-[94vw] max-w-[260px] aspect-[500/512] pointer-events-none">
+      <div className="absolute -bottom-5 -right-6 z-1 w-[50vw] max-w-[200px] aspect-[500/512] pointer-events-none">
         <Image
           src={ASSETS.borde}
           alt=""
           fill
           loading="eager"
-          sizes="(max-width: 768px) 34vw, 260px"
+          sizes="(max-width: 768px) 50vw, 200px"
           className="object-contain object-left-bottom"
         />
       </div>
@@ -134,7 +134,7 @@ export function HeroSection({
 
       <motion.div
         {...reveal(0.5, { x: 20 })}
-        className="absolute z-20 -right-[2%] md:right-[16%] bottom-[4%] md:bottom-[9%] w-[180px] h-[184px] md:w-[190px] md:h-[196px] pointer-events-none"
+        className="absolute z-20 -right-[2%] md:right-[16%] bottom-[4%] md:bottom-[9%] w-[150px] h-[154px] md:w-[190px] md:h-[196px] pointer-events-none"
         style={{ rotate: "-65deg" }}
       >
         <Image
@@ -165,13 +165,13 @@ export function HeroSection({
         >
           {/* Fondo del óvalo: crema translúcido para que el nombre se lea
               sobre la escalera/candelabro que quedan detrás. */}
-          <div
+          {/* <div
             aria-hidden="true"
             className="absolute inset-[17%_19%] rounded-[50%]"
             style={{
               background: `radial-gradient(ellipse, ${colors.paper}f2 55%, ${colors.paper}c0 100%)`,
             }}
-          />
+          /> */}
           {/* "XV" de fondo, detrás del nombre: dorado liso (sin gradiente ni
               animación, a pedido: que no brille). Translúcido para que el
               nombre se siga leyendo encima. */}
@@ -191,14 +191,16 @@ export function HeroSection({
             className="object-contain"
             style={{ filter: "drop-shadow(0 10px 18px rgba(59,47,32,0.25))" }}
           />
+          {/* "XV AÑOS" subido con `translate` (no margen): se separa del
+              nombre sin empujar el nombre ni la fecha hacia abajo. */}
           <span
-            className="relative font-mono text-[0.7rem] md:text-sm uppercase tracking-[0.35em] mb-1"
+            className="relative font-mono text-[0.7rem] md:text-sm uppercase tracking-[0.35em] mb-1 -translate-y-14 md:-translate-y-12"
             style={{ color: colors.accent }}
           >
             {config.client.eventType}
           </span>
           <h1
-            className="relative font-pinyon-script text-[70px] md:text-[98px] leading-none"
+            className="relative font-pinyon-script text-[78px] md:text-[108px] leading-none"
             style={{
               color: colors.accent,
               textShadow: "0 3px 10px rgba(59,47,32,0.18)",
@@ -206,16 +208,6 @@ export function HeroSection({
           >
             {config.client.name}
           </h1>
-          <span
-            className="relative font-display italic text-base md:text-lg mt-1"
-            style={{ color: colors.ink, opacity: 0.75 }}
-          >
-            {config.event.date.toLocaleDateString("es-ES", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </span>
         </motion.div>
       </div>
     </section>

@@ -234,30 +234,38 @@ export function EnvelopeScreen({
               draggable={false}
             />
           </motion.button>
-          <AnimatePresence>
-            {!isOpening && (
-              // La cartela también es un botón: tocarla abre igual que la
-              // cuerda (hay invitados que no descubren el arrastre). Quieta,
-              // sin vaivén (a pedido); solo se desvanece al abrir.
-              <motion.button
-                type="button"
-                onClick={handleOpen}
-                aria-label="Abrir invitación"
-                exit={{ opacity: 0 }}
-                // Texto sobre la cartela ornamental (821x320 recortada, la
-                // misma de Padres), centrado en su zona lisa.
-                className="-mt-1 flex items-center justify-center w-[180px] md:w-[220px] aspect-[821/320] font-mono text-[0.68rem] md:text-[0.78rem] font-semibold uppercase tracking-[0.2em] whitespace-nowrap drop-shadow-md cursor-pointer"
-                style={{
-                  color: colors.accent,
-                  backgroundImage: `url("${trimmedAsset(ASSETS.cartela, 500)}")`,
-                  backgroundSize: "100% 100%",
-                  backgroundRepeat: "no-repeat",
-                }}
-              >
-                Abrir invitación
-              </motion.button>
-            )}
-          </AnimatePresence>
+          {/* Carril de 180/220px (el ancho que tenía la cartela): fija el
+              ancho de la columna, y por lo tanto la posición de la cuerda.
+              La cartela, más grande, sobresale por igual a ambos lados
+              (sigue centrada bajo la cuerda y entra en pantalla). */}
+          <div className="-mt-1 w-[180px] md:w-[220px] flex justify-center">
+            <AnimatePresence>
+              {!isOpening && (
+                // La cartela también es un botón: tocarla abre igual que
+                // la cuerda (hay invitados que no descubren el arrastre).
+                // Quieta, sin vaivén (a pedido); solo se desvanece al abrir.
+                <motion.button
+                  type="button"
+                  onClick={handleOpen}
+                  aria-label="Abrir invitación"
+                  exit={{ opacity: 0 }}
+                  // Texto sobre la cartela ornamental (821x320 recortada, la
+                  // misma de Padres), centrado en su zona lisa (~64% del
+                  // ancho): a 260/300px el texto más grande entra sin pisar
+                  // los ornamentos.
+                  className="shrink-0 flex items-center justify-center w-[260px] md:w-[300px] aspect-[821/320] font-mono text-[0.8rem] md:text-[0.9rem] font-bold uppercase tracking-[0.14em] whitespace-nowrap drop-shadow-lg cursor-pointer"
+                  style={{
+                    color: colors.accent,
+                    backgroundImage: `url("${trimmedAsset(ASSETS.cartela, 500)}")`,
+                    backgroundSize: "100% 100%",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                >
+                  Abrir invitación
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
         </motion.div>
       )}
 
