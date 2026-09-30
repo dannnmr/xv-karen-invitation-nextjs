@@ -254,7 +254,7 @@ export function EnvelopeScreen({
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                Jala la cuerda
+                Abrir invitación
               </motion.button>
             )}
           </AnimatePresence>

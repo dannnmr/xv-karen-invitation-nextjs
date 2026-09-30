@@ -67,19 +67,29 @@ export const metadata: Metadata = {
   ...(invitationConfig.visuals.envelope?.seal
     ? { icons: { icon: invitationConfig.visuals.envelope.seal } }
     : {}),
-  // Vista previa al compartir el link (WhatsApp, etc.). PENDIENTE: imagen
-  // de preview de esta boda (1200-1600 px de ancho, < 300 KB -- WhatsApp
-  // no muestra miniaturas más pesadas) -> public/images/ + `images` acá.
-  // Sin imagen, el preview sale solo con título y descripción.
+  // Vista previa al compartir el link (WhatsApp, etc.): 1600x900, 236 KB
+  // (WhatsApp no muestra miniaturas de más de ~300 KB). Ruta relativa ->
+  // se resuelve contra `metadataBase`.
   openGraph: {
     title,
     description,
     url: siteUrl,
+    type: "website",
+    locale: "es_BO",
+    images: [
+      {
+        url: "/images/metadata_karen.png",
+        width: 1600,
+        height: 900,
+        alt: "Karen Rodriguez — Mis XV Años",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title,
     description,
+    images: ["/images/metadata_karen.png"],
   },
 };
 
