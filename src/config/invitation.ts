@@ -190,14 +190,14 @@ export const invitationConfig: InvitationConfig = {
     name: "Karen",
     eventType: "XV Años",
     dedication:
-      "Entre el encanto y elegancia de una época dorada y la magia de un sueño hecho realidad, celebro mis quince años. Que esta noche sea un recuerdo eterno, digno de ser guardado en el corazón.",
+      "Entre el encanto y la elegancia de una época dorada, y de un sueño hecho realidad, celebro mis quince años. Que esta noche sea un recuerdo eterno, digno de ser guardado en el corazón.",
   },
   families: {
     topLabel: "Junto a mis padres",
     groups: [
       {
         label: "",
-        names: ["Laly Rosario Jaldin Crespo", "Victor Rodriguez Jaldin"],
+        names: ["Laly Rosario Jaldin Crespo", "Victor Rodriguez Vidal"],
       },
     ],
     // PROPUESTA (la clienta no envió texto) -- confirmar.
