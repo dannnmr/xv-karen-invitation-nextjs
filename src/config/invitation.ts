@@ -190,7 +190,7 @@ export const invitationConfig: InvitationConfig = {
     name: "Karen",
     eventType: "XV Años",
     dedication:
-      "Entre el encanto y la elegancia de una época dorada, y de un sueño hecho realidad, celebro mis quince años. Que esta noche sea un recuerdo eterno, digno de ser guardado en el corazón.",
+      "Entre el encanto y la elegancia de una época dorada, de un sueño hecho realidad, celebro mis quince años. Que esta noche sea un recuerdo eterno, digno de ser guardado en el corazón.",
   },
   families: {
     topLabel: "Junto a mis padres",
