@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useMotionValueEvent, useScroll } from "framer-motion";
+import { useMotionValueEvent, useScroll, useSpring } from "framer-motion";
 import Image from "next/image";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { trimmedAsset } from "@/components/ui/LaceFrame";
@@ -24,10 +24,13 @@ import { ASSETS, type InvitationConfig } from "@/config/invitation";
  * `transform` (compositor-only, sin reflow).
  */
 
-const PAD_PCT = 0.08; // aire arriba/abajo del primer y último momento
+const PAD_PCT = 0.06; // aire arriba/abajo del primer y último momento
 const TURN_X = 0.2; // vueltas del camino: 20% y 80% del ancho
-// Separación vertical por momento: acuarela (80-96px) + un poco de aire.
-const ROW_HEIGHT = 116;
+// Separación vertical por momento: acuarela (64-80px) + aire. Con 86 la
+// descripción de un momento casi tocaba el título del siguiente; 100 deja
+// respirar y sigue siendo más compacto que el original (116). La hora va
+// en la misma línea que el título para que cada fila sea más baja.
+const ROW_HEIGHT = 100;
 
 // Mismo algoritmo que vania-tania: curvas cúbicas entre puntos alternados,
 // entrando y saliendo por el centro.
@@ -78,29 +81,60 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
     target: containerRef,
     offset: ["start 75%", "end 35%"],
   });
+  // Resorte sobre el progreso: en móvil los eventos de scroll llegan a
+  // saltos y la flor se "teletransportaba" de un punto al otro; con el
+  // resorte se desliza entre ellos (inercia leve, sin retraso notorio).
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 26,
+    mass: 0.35,
+    restDelta: 0.0005,
+  });
+
+  // Tabla de puntos del camino, muestreada UNA vez por ancho: antes cada
+  // evento de scroll llamaba a `getTotalLength()` + `getPointAtLength()`,
+  // que recorren todo el <path> (caro, y más en iOS). Ahora cada cuadro es
+  // una interpolación entre dos puntos ya calculados.
+  const pointsRef = useRef<{ x: number; y: number }[]>([]);
+  const rotorRef = useRef<HTMLDivElement>(null);
 
   const placeHeart = (progress: number) => {
-    const path = pathRef.current;
+    const pts = pointsRef.current;
     const heart = heartRef.current;
-    if (!path || !heart) return;
-    const p = path.getPointAtLength(
-      path.getTotalLength() * Math.min(1, Math.max(0, progress)),
-    );
-    // La flor además gira mientras avanza (una vuelta y media en todo el
-    // recorrido): se lee como "rodando" por el camino.
-    heart.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%) rotate(${progress * 540}deg)`;
+    const rotor = rotorRef.current;
+    if (pts.length < 2 || !heart || !rotor) return;
+    const t = Math.min(1, Math.max(0, progress)) * (pts.length - 1);
+    const i = Math.min(pts.length - 2, Math.floor(t));
+    const f = t - i;
+    const x = pts[i].x + (pts[i + 1].x - pts[i].x) * f;
+    const y = pts[i].y + (pts[i + 1].y - pts[i].y) * f;
+    // Traslación en la capa externa y giro en la interna (la flor "rueda":
+    // vuelta y media en todo el recorrido). La sombra vive en la capa más
+    // interna, así se rasteriza una sola vez y el navegador solo compone
+    // capas ya pintadas en cada cuadro.
+    heart.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+    rotor.style.transform = `rotate(${progress * 540}deg)`;
   };
-  useMotionValueEvent(scrollYProgress, "change", placeHeart);
-  // Posición inicial, y de nuevo cuando cambia el ancho (redibuja el path).
+  useMotionValueEvent(smoothProgress, "change", placeHeart);
+  // Re-muestrea el camino cuando cambia el ancho (se redibuja el path) y
+  // ubica la flor en su posición actual.
   useEffect(() => {
-    placeHeart(scrollYProgress.get());
+    const path = pathRef.current;
+    if (!path) return;
+    const total = path.getTotalLength();
+    const SAMPLES = 400;
+    pointsRef.current = Array.from({ length: SAMPLES + 1 }, (_, k) => {
+      const p = path.getPointAtLength((total * k) / SAMPLES);
+      return { x: p.x, y: p.y };
+    });
+    placeHeart(smoothProgress.get());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width]);
 
   const d = width > 0 ? snakePath(count, width, height) : "";
 
   return (
-    <section className="relative pt-32 md:pt-40 pb-20 px-4 overflow-hidden">
+    <section className="relative pt-32 md:pt-40 pb-10 px-4 overflow-hidden">
       {/* Tela drapeada como guirnalda de ancho completo arriba (el asset es
           una caída de tela en U, 500x296): abre la sección como un telón. */}
       <div
@@ -156,7 +190,9 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
             return (
               <div
                 key={item.title}
-                className={`absolute inset-x-0 flex items-center gap-3 ${
+                // gap-8/12: el texto necesita aire respecto de la acuarela
+                // (con menos quedaba pegado a la imagen y al punteado).
+                className={`absolute inset-x-0 flex items-center gap-8 md:gap-12 ${
                   isLeft ? "flex-row" : "flex-row-reverse"
                 }`}
                 style={{ top: `${pct}%`, transform: "translateY(-50%)" }}
@@ -166,10 +202,10 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
                     tapa el punteado detrás (las acuarelas son
                     transparentes). */}
                 <div
-                  className={`relative shrink-0 w-20 h-20 md:w-24 md:h-24 z-10 ${
+                  className={`relative shrink-0 w-16 h-16 md:w-20 md:h-20 z-10 ${
                     isLeft
-                      ? "ml-[calc(20%-2.5rem)] md:ml-[calc(20%-3rem)]"
-                      : "mr-[calc(20%-2.5rem)] md:mr-[calc(20%-3rem)]"
+                      ? "ml-[calc(20%-2rem)] md:ml-[calc(20%-2.5rem)]"
+                      : "mr-[calc(20%-2rem)] md:mr-[calc(20%-2.5rem)]"
                   }`}
                 >
                   <div
@@ -184,7 +220,7 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
                       src={item.image}
                       alt={item.title}
                       fill
-                      sizes="(max-width: 768px) 80px, 96px"
+                      sizes="(max-width: 768px) 64px, 80px"
                       className="object-contain"
                     />
                   )}
@@ -194,21 +230,31 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
                     isLeft ? "items-start text-left" : "items-end text-right"
                   }`}
                 >
-                  <span
-                    className="font-display italic text-[1.7rem] md:text-3xl leading-none"
-                    style={{ color: colors.accent }}
+                  {/* Hora y título en una línea; la hora siempre del lado de
+                      la acuarela (en las filas derechas, `flex-row-reverse`). */}
+                  <div
+                    className={`flex items-baseline gap-2 ${
+                      isLeft ? "flex-row" : "flex-row-reverse"
+                    }`}
                   >
-                    {item.time}
-                  </span>
-                  <h3
-                    className="font-sans font-semibold text-[0.62rem] md:text-xs uppercase tracking-[0.18em] mt-1"
-                    style={{ color: colors.ink }}
-                  >
-                    {item.title}
-                  </h3>
+                    <span
+                      className="font-display italic text-[1.35rem] md:text-2xl leading-none shrink-0"
+                      style={{ color: colors.accent }}
+                    >
+                      {item.time}
+                    </span>
+                    <h3
+                      className="font-sans font-semibold text-[0.62rem] md:text-xs uppercase tracking-[0.16em] leading-tight"
+                      style={{ color: colors.ink }}
+                    >
+                      {item.title}
+                    </h3>
+                  </div>
                   {item.description && (
                     <p
-                      className="font-sans text-[0.65rem] md:text-[0.72rem] leading-snug mt-0.5 max-w-44 md:max-w-52"
+                      // `text-balance`: reparte las líneas parejas en vez de
+                      // dejar una palabra sola abajo ("noche").
+                      className="font-sans text-[0.65rem] md:text-[0.72rem] leading-snug mt-1 max-w-48 md:max-w-56 text-balance"
                       style={{ color: colors.ink, opacity: 0.6 }}
                     >
                       {item.description}
@@ -221,19 +267,26 @@ export function ItinerarySection({ config }: { config: InvitationConfig }) {
 
           {/* Flor dorada que recorre el camino (encima de las acuarelas). */}
           {width > 0 && (
+            // Tres capas: traslación (externa) > giro > flor con sombra.
             <div
               ref={heartRef}
               aria-hidden="true"
               className="absolute top-0 left-0 z-20 w-11 h-11 md:w-12 md:h-12 will-change-transform"
-              style={{ filter: "drop-shadow(0 3px 5px rgba(59,47,32,0.3))" }}
             >
-              <Image
-                src={trimmedAsset(ASSETS.florDorada, 150)}
-                alt=""
-                fill
-                sizes="48px"
-                className="object-contain"
-              />
+              <div ref={rotorRef} className="absolute inset-0 will-change-transform">
+                <div
+                  className="absolute inset-0"
+                  style={{ filter: "drop-shadow(0 3px 5px rgba(59,47,32,0.3))" }}
+                >
+                  <Image
+                    src={trimmedAsset(ASSETS.florDorada, 150)}
+                    alt=""
+                    fill
+                    sizes="48px"
+                    className="object-contain"
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>

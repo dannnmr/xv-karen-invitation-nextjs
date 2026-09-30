@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { DecorationField } from "@/components/ui/DecorationField";
+import { trimmedAsset } from "@/components/ui/LaceFrame";
 import {
   invitationConfig,
   type DecorationSpec,
@@ -95,7 +96,7 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
           {config.client.name}
         </h2>
         <p
-          className="font-sans text-xs tracking-[0.3em] font-light mt-4 mb-4 uppercase max-w-sm"
+          className="font-sans text-xs tracking-[0.3em] font-light mt-2 uppercase max-w-sm"
           style={{ color: colors.ink, opacity: 0.7 }}
         >
           Vive la experiencia por ti mismo.
@@ -103,9 +104,11 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
       </div>
 
       {/* Imagen de cierre (`visuals.footerImage`), antes de la tarjeta de
-          contacto. Opcional: sin ella, el footer queda como antes. */}
+          contacto. Opcional: sin ella, el footer queda como antes. Caja con
+          la proporción del asset de Karen (cisnes, 407x348 recortado): una
+          caja vertical dejaba ~90px vacíos arriba y abajo del dibujo. */}
       {config.visuals.footerImage && (
-        <div className="relative z-10 w-48 h-64 md:w-60 md:h-80 mt-2">
+        <div className="relative z-10 w-48 md:w-60 aspect-[407/348] mt-3">
           {/* Capa del jardín: el DOBLE de ancho que la foto (centrada), así
               los ramos tienen lugar a los costados -- el `mask-image` recorta
               todo lo que queda fuera de la caja del wrapper, por eso no puede
@@ -128,7 +131,7 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
             />
           </div>
           <Image
-            src={config.visuals.footerImage}
+            src={trimmedAsset(config.visuals.footerImage, 500)}
             alt={`${config.client.name} - ${config.client.eventType}`}
             fill
             sizes="(max-width: 768px) 192px, 240px"
@@ -139,7 +142,7 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
 
       {/* Firma / tarjeta de contacto */}
       <div
-        className="relative z-10 flex flex-col items-center pt-4 mt-3 border-t w-full max-w-sm"
+        className="relative z-10 flex flex-col items-center pt-3 mt-3 border-t w-full max-w-sm"
         style={{ borderColor: `${colors.accent}15` }}
       >
         <a
