@@ -48,7 +48,7 @@ export function LocationSection({ config }: { config: InvitationConfig }) {
           texto. */}
       <Ornament
         src={ASSETS.candelabro}
-        className="top-0 right-[6%] md:right-[12%] w-24 h-29 md:w-36 md:h-44 z-0"
+        className="top-0 -right-[5%] md:right-[12%] w-34 h-39 md:w-36 md:h-44 z-0"
         sizes="144px"
         motion="sway"
       />

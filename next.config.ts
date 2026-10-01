@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["192.168.0.4"],
+  allowedDevOrigins: ["192.168.0.6"],
 
   images: {
     // `next/image` NO pasa por el optimizador de Next: usa el loader custom

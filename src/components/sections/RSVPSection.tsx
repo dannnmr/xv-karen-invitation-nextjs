@@ -27,7 +27,10 @@ function readStoredRsvp(key: string): StoredRsvp | null {
   try {
     const parsed = JSON.parse(localStorage.getItem(key) ?? "null");
     if (parsed?.asistencia === "si" || parsed?.asistencia === "no") {
-      return { nombre: String(parsed.nombre ?? ""), asistencia: parsed.asistencia };
+      return {
+        nombre: String(parsed.nombre ?? ""),
+        asistencia: parsed.asistencia,
+      };
     }
   } catch {
     // localStorage no disponible / JSON corrupto -> se muestra el form.
@@ -370,7 +373,10 @@ function ConfirmedView({
     >
       <div
         className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-4 border-[1.5px]"
-        style={{ borderColor: colors.gold, backgroundColor: `${colors.gold}18` }}
+        style={{
+          borderColor: colors.gold,
+          backgroundColor: `${colors.gold}18`,
+        }}
       >
         {attends ? (
           <Check size={30} strokeWidth={1.5} color={colors.accent} />

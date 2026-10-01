@@ -31,10 +31,11 @@ siguiendo la skill `invitation-master`.
   (roto/caro en iOS Safari).
 - Apertura: cortinas + cuerda compartidas con la boda (crema), medallón
   central = máscara veneciana dorada.
-- Hero: escenario con los 7 assets pedidos — cortinas (esquinas
-  superiores), candelabro colgando, marco oval dorado con el nombre adentro,
-  escalera de base, ornamentos dorados en las esquinas inferiores, vela y
-  paraguas junto a la escalera.
+- Hero (según referencia de la clienta): escena de fondo
+  `fondo_victoriana` (arco + cortinaje + balcón), candelabro colgando, marco
+  oval dorado con el nombre adentro, y abajo ornamentos dorados en las
+  esquinas, vela, máscara negra, espejo de mano y máscara dorada. En desktop
+  el fondo va completo en una columna centrada, difuminado a los costados.
 - Assets como fondo de elementos: pergamino = frase, cartela dorada = título
   de Padres, encaje rectangular = confirmación, cartela de encaje = campo
   de Música, marco oval dorado = visor de la Galería, tela = guirnalda del

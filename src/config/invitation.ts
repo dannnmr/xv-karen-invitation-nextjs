@@ -137,6 +137,8 @@ export interface InvitationConfig {
       pullCord?: string; // cuerda que abre las cortinas
     };
     heroCrest?: string;
+    // Escena de fondo del Hero (arco + cortinaje + balcón, 600x1041).
+    heroBackground?: string;
     locationSideImage?: string;
     footerImage?: string;
     // Fondos de elementos (en vez de tarjetas planas).
@@ -354,6 +356,7 @@ export const invitationConfig: InvitationConfig = {
       pullCord: A("v1790661204/cuerda_fno3vh.webp"),
       seal: ASSETS.mascaraDorada,
     },
+    heroBackground: A("v1790871871/fondo_victoriana_xnaqly.webp"),
     locationSideImage: ASSETS.realezaImage,
     footerImage: ASSETS.cisnes,
     rsvpFrame: ASSETS.rectanguloEncaje,
