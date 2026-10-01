@@ -67,9 +67,9 @@ export function FooterSection({ config }: { config: InvitationConfig }) {
   const { colors } = config.theme;
 
   return (
-    <footer className="relative pt-5 pb-5 px-6 flex flex-col items-center overflow-hidden">
+    <footer className="relative pt-1 pb-5 px-6 flex flex-col items-center overflow-hidden">
       <div className="relative z-10 flex flex-col items-center text-center w-full px-4">
-        <div className="flex items-center gap-4 mb-1.5">
+        <div className="flex items-center gap-4 mb-1">
           <div
             className="w-10 h-px"
             style={{ backgroundColor: `${colors.accent}30` }}

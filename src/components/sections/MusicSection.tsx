@@ -58,9 +58,7 @@ export function MusicSection({ config }: { config: InvitationConfig }) {
   }, [justSent]);
 
   return (
-    <section
-      className="relative py-16 px-6 flex flex-col items-center overflow-hidden"
-    >
+    <section className="relative py-5 px-6 flex flex-col items-center overflow-hidden">
       {/* Cortinaje de tela colgando arriba, como el lazo de un escenario,
           detrás de las máscaras. */}
       <Ornament
@@ -72,13 +70,13 @@ export function MusicSection({ config }: { config: InvitationConfig }) {
       {/* Enredaderas doradas meciéndose a los dos lados (simétricas). */}
       <Ornament
         src={ASSETS.floresDoradas}
-        className="top-[30%] -left-8 md:left-[12%] w-18 h-40 md:w-24 md:h-52 z-0"
+        className="top-[30%] -left-8 md:left-[12%] w-20 h-40 md:w-24 md:h-52 z-0"
         sizes="96px"
         motion="float-medium"
       />
       <Ornament
         src={ASSETS.floresDoradas}
-        className="top-[30%] -right-8 md:right-[12%] w-18 h-40 md:w-24 md:h-52 z-0"
+        className="top-[30%] -right-8 md:right-[12%] w-20 h-40 md:w-24 md:h-52 z-0"
         sizes="96px"
         motion="float-medium"
         delay="-2.5s"
@@ -147,7 +145,10 @@ export function MusicSection({ config }: { config: InvitationConfig }) {
             musicales subiendo desde su borde superior (más grande: es la
             pieza central de la sección). */}
         <div className="relative">
-          <div aria-hidden="true" className="absolute inset-x-0 top-[12%] h-0 pointer-events-none">
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-[12%] h-0 pointer-events-none"
+          >
             {NOTES.map(({ left, Icon, size, delay }, i) => (
               <Icon
                 key={i}
@@ -192,7 +193,11 @@ export function MusicSection({ config }: { config: InvitationConfig }) {
                 style={{ backgroundColor: colors.accent }}
               >
                 {isPending ? (
-                  <RotateCw size={16} className="animate-spin" color={colors.paper} />
+                  <RotateCw
+                    size={16}
+                    className="animate-spin"
+                    color={colors.paper}
+                  />
                 ) : (
                   <Send size={16} color={colors.paper} />
                 )}
