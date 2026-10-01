@@ -299,7 +299,7 @@ export function EnvelopeScreen({
                 onClick={handleOpen}
                 whileHover={{ scale: 1.06, rotate: 2 }}
                 whileTap={{ scale: 0.94 }}
-                className="relative w-[170px] h-[170px] md:w-[260px] md:h-[260px] cursor-pointer drop-shadow-2xl animate-pulse-slow"
+                className="relative w-[200px] h-[200px] md:w-[260px] md:h-[260px] cursor-pointer drop-shadow-2xl animate-pulse-slow"
                 aria-label="Abrir invitación con el sello"
               >
                 <Image
