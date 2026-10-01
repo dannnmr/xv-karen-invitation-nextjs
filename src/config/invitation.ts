@@ -56,9 +56,9 @@ export interface GiftPreference {
 
 export interface InvitationConfig {
   /**
-   * Slug único de esta invitación: amarra el rastreo de contactos
-   * (`contact_clicks.invitation`, ver src/app/contacto/route.ts) en el
-   * proyecto Supabase compartido entre invitaciones.
+   * Slug único de esta invitación en el proyecto Supabase compartido:
+   * scope del rate limiting (`karen:rsvp`, `karen:music`), prefijo de las
+   * fotos en Storage (`karen/gallery/`) y `contact_clicks.invitation`.
    */
   id: string;
   client: {
@@ -108,7 +108,8 @@ export interface InvitationConfig {
     qrImage?: string;
   };
   music: {
-    // Solo ambiental (botón play/pause, AudioController).
+    // Ambiental (botón play/pause, AudioController). Las sugerencias de
+    // canciones de los invitados van aparte (MusicSection -> musica_karen).
     ambientTrack: string;
   };
   theme: {
@@ -140,14 +141,20 @@ export interface InvitationConfig {
     footerImage?: string;
     // Fondos de elementos (en vez de tarjetas planas).
     rsvpFrame?: string; // encaje rectangular detrás de la confirmación
+    musicFrame?: string; // cartela de encaje donde va el campo de canción
+    galleryFrame?: string; // marco ovalado dorado: las fotos se ven dentro
     dressCodeDoily?: string;
     giftEnvelope?: string; // ilustración de "lluvia de sobres"
     countdownCar?: string;
   };
-  /** Confirmación por WhatsApp (sin RSVP automático). */
+  /**
+   * RSVP con Supabase (`invitados_karen`, ver src/actions/rsvp.ts): 1 pase
+   * por confirmación (nombre + sí/no). Pasado `deadline` el formulario se
+   * cierra -- en el cliente, en la Server Action y en la policy de la tabla
+   * (supabase/schema.sql repite la misma fecha: si cambia, cambiar ambas).
+   */
   rsvp: {
     deadline: Date;
-    whatsappNumber: string; // formato internacional sin "+", para wa.me
   };
 }
 
@@ -339,7 +346,7 @@ export const invitationConfig: InvitationConfig = {
     // El Hero de Karen compone sus 7 assets propios (HeroSection.tsx); no
     // usa decoraciones sueltas.
     heroDecorations: [],
-    // Cortinas y cuerda compartidas con la boda de Ronaldo & Alejandra
+    // Cortinas y cuerda compartidas con la boda de Ronaldo & Maria
     // (crema, van con esta paleta); medallón = máscara veneciana dorada.
     envelope: {
       left: A("v1790660537/lado_izquierdo_cfobtr.webp"),
@@ -350,11 +357,12 @@ export const invitationConfig: InvitationConfig = {
     locationSideImage: ASSETS.realezaImage,
     footerImage: ASSETS.cisnes,
     rsvpFrame: ASSETS.rectanguloEncaje,
+    musicFrame: ASSETS.cartela,
+    galleryFrame: ASSETS.cuadroDorado,
     giftEnvelope: A("v1790715811/sobre_iy6bs8.webp"),
   },
   rsvp: {
-    // PENDIENTE: fecha límite -- default 1 semana antes del evento.
+    // 1 semana antes del evento. Offset -04:00 explícito (Bolivia).
     deadline: new Date("2026-10-17T23:59:59-04:00"),
-    whatsappNumber: "59173645140",
   },
 };

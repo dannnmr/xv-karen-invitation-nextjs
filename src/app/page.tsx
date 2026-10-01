@@ -14,7 +14,9 @@ import { SaveTheDateSection } from "@/components/sections/SaveTheDateSection";
 import { LocationSection } from "@/components/sections/LocationSection";
 import { DressCodeSection } from "@/components/sections/DressCodeSection";
 import { GiftRegistrySection } from "@/components/sections/GiftRegistrySection";
-import { WhatsAppRsvpSection } from "@/components/sections/WhatsAppRsvpSection";
+import { RSVPSection } from "@/components/sections/RSVPSection";
+import { MusicSection } from "@/components/sections/MusicSection";
+import { GallerySection } from "@/components/sections/GallerySection";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { invitationConfig } from "@/config/invitation";
 
@@ -81,7 +83,14 @@ export default function Home() {
           <GiftRegistrySection config={invitationConfig} />
         </LazyMount>
         <LazyMount minHeight={700}>
-          <WhatsAppRsvpSection config={invitationConfig} />
+          <RSVPSection config={invitationConfig} />
+        </LazyMount>
+        <LazyMount minHeight={420}>
+          <MusicSection config={invitationConfig} />
+        </LazyMount>
+        {/* La Galería abre su websocket de Realtime recién al acercarse. */}
+        <LazyMount minHeight={720}>
+          <GallerySection config={invitationConfig} />
         </LazyMount>
         <LazyMount minHeight={360}>
           <FooterSection config={invitationConfig} />

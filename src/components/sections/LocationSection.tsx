@@ -4,7 +4,8 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import { Navigation } from "lucide-react";
-import type { InvitationConfig } from "@/config/invitation";
+import { Ornament } from "@/components/ui/Ornament";
+import { ASSETS, type InvitationConfig } from "@/config/invitation";
 
 /**
  * Mezcla final entre gredmarie y Luciana (invitation_test_idea), a pedido
@@ -41,6 +42,22 @@ export function LocationSection({ config }: { config: InvitationConfig }) {
       ref={sectionRef}
       className="relative py-20 px-6 flex flex-col items-center overflow-hidden"
     >
+      {/* Adornos anclados (pedido: "muy plana", pero sin flores sueltas):
+          candelabro colgando arriba a la derecha (se mece como el del
+          Hero) y enredadera subiendo por el borde izquierdo, detrás del
+          texto. */}
+      <Ornament
+        src={ASSETS.candelabro}
+        className="top-0 right-[6%] md:right-[12%] w-24 h-29 md:w-36 md:h-44 z-0"
+        sizes="144px"
+        motion="sway"
+      />
+      <Ornament
+        src={ASSETS.floresDoradas}
+        className="bottom-4 -left-5 md:left-4 w-16 h-35 md:w-24 md:h-52 z-0"
+        sizes="96px"
+        motion="float-medium"
+      />
       <div className="relative z-10 max-w-5xl w-full">
         {/* Ramo de flores a la derecha -- misma entrada que Luciana
             (invitation_test_idea/LocationSection.tsx): scale 1.1->1 + x
@@ -59,13 +76,17 @@ export function LocationSection({ config }: { config: InvitationConfig }) {
             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
             className="absolute bottom-[-8%] right-[-40%] w-[90%] aspect-square md:bottom-auto md:top-[5%] md:right-[-25%] md:w-[90%] md:max-w-175 md:h-[90%] md:aspect-auto pointer-events-none z-0"
           >
-            <Image
-              src={config.visuals.locationSideImage}
-              alt=""
-              fill
-              sizes="(max-width: 768px) 90vw, 700px"
-              className="object-contain"
-            />
+            {/* Tras la entrada, la dama "flota" suave (CSS en un hijo: el
+                `transform` del motion.div es de la entrada). */}
+            <div className="absolute inset-0 animate-float-slow">
+              <Image
+                src={config.visuals.locationSideImage}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 90vw, 700px"
+                className="object-contain"
+              />
+            </div>
           </motion.div>
         )}
 

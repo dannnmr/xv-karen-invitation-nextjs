@@ -1,54 +1,63 @@
-# Backend de XV Andrea Carolina — pendientes manuales
+# Backend de XV Karen — pendientes manuales
 
-Estos dos archivos (`schema.sql`, `apps-script/sync-to-sheets.gs`) están
-listos, pero requieren pasos manuales fuera del repo antes de quedar
-operativos. En orden:
+`schema.sql` y `apps-script/sync-to-sheets.gs` están listos, pero requieren
+pasos manuales fuera del repo antes de quedar operativos. En orden:
 
 1. **Google Sheet + Apps Script**
    - Crear una Google Sheet nueva para esta invitación.
    - Extensiones > Apps Script, pegar el contenido de `apps-script/sync-to-sheets.gs`.
-   - `EVENT_TIMEZONE` confirmado: `America/La_Paz` (Bolivia).
    - Configuración del proyecto (⚙️) > Propiedades del script > agregar
-     `SYNC_SECRET` con un valor largo y aleatorio (generarlo, no reusar el
-     de otra invitación).
+     `SYNC_SECRET` con un valor largo y aleatorio (nuevo, no reusar el de
+     otra invitación).
    - Implementar > Nueva implementación > Aplicación web (ejecutar como
      "yo", acceso "cualquiera"). Copiar la URL `/exec`.
-   - **Si ya habías desplegado antes de fijar `America/La_Paz`**: guardar
-     (💾) en el editor no alcanza — hay que ir a Implementar > Gestionar
-     implementaciones > editar (✏️) la implementación activa > Versión:
-     "Nueva versión" > Implementar, para que el `/exec` ya publicado tome
-     el cambio (si no, sigue corriendo el código viejo con la zona horaria
-     placeholder).
 
 2. **Supabase SQL Editor**
-   - Pegar `schema.sql` completo.
-   - Antes de ejecutar: reemplazar los dos placeholders de la URL en
-     `PARTE C` (`PEGAR_ID_DEL_DEPLOYMENT`, `PEGAR_EL_SECRETO`) con la URL
-     real del paso 1 y el mismo `SYNC_SECRET`.
-   - Ejecutar el script completo.
-   - Correr las consultas de VERIFICACIÓN al final del archivo (columnas +
-     policies realmente aplicadas) — no asumir que lo desplegado coincide
-     con el archivo si algún nombre ya existía.
+   - Primero, comprobar que no existan tablas con estos nombres:
+     `select table_name from information_schema.tables where table_name like '%karen%';`
+     Debe devolver 0 filas.
+   - Pegar `schema.sql` completo, reemplazar los dos placeholders de la URL
+     en la PARTE C (`PEGAR_ID_DEL_DEPLOYMENT`, `PEGAR_EL_SECRETO`) y ejecutar.
+   - Correr las consultas de VERIFICACIÓN del final (columnas + policies
+     realmente aplicadas).
 
-3. **Supabase Dashboard > Database > Replication**
-   - Agregar `fotos_galeria_andrea_carolina` a la publication
-     `supabase_realtime` (paso aparte, necesario para que la Galería
-     actualice en vivo a otros invitados — se olvida fácil).
+3. **Realtime de la Galería**
+   - Database > Replication: agregar `fotos_galeria_karen` a
+     `supabase_realtime` (o `alter publication supabase_realtime add table fotos_galeria_karen;`).
 
 4. **Prueba real end-to-end**
-   - Insert de prueba en `invitados_andrea_carolina` (nombre
-     `ZZZ_TEST_BORRAR_...`) y confirmar que llega a la pestaña "RSVP" de
-     la Sheet. Borrar el registro de prueba de la tabla después.
+   - Confirmar desde la invitación con el nombre `ZZZ_TEST_BORRAR`, sugerir
+     una canción de prueba y subir una foto de prueba.
+   - Revisar que lleguen a las pestañas RSVP / Musica / Galeria de la Sheet.
+   - Borrar los registros de prueba (tabla + archivo en Storage para la foto,
+     y la fila de la Sheet).
+   - Ojo: el navegador donde se probó queda marcado como "ya confirmaste".
+     Para volver a ver el formulario, borrar la clave `rsvp:karen` de
+     localStorage (DevTools > Application) o usar otro navegador.
 
-5. **Variables de entorno** (cuando se cree el proyecto Next.js)
-   - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: mismas
-     del proyecto Supabase compartido (no son nuevas si ya las tenés de
-     otra invitación en este mismo proyecto).
-   - La URL del Apps Script y su secreto NO van en `.env.local` del
-     frontend — viven solo en el trigger de Postgres (Supabase), nunca en
-     el cliente.
+5. **Variables de entorno**
+   - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: las del
+     proyecto compartido (ya en `.env.local`).
+   - La URL del Apps Script y su secreto NO van en `.env.local` — viven solo
+     en el trigger de Postgres.
 
-## Convención de nombres usada acá
-- `id` de la invitación (para `config.ts`, rate limiting, prefijo de Storage): `andrea-carolina`
-- Tablas: `invitados_andrea_carolina`, `musica_andrea_carolina`, `fotos_galeria_andrea_carolina`
-- Bucket de Storage compartido `invitation_assets`, prefijo `andrea-carolina/gallery/`
+## Fecha límite
+
+El RSVP se cierra el 17/10/2026 23:59 (Bolivia) en tres lugares: la vista
+(`RSVPSection.tsx`), la Server Action (`src/actions/rsvp.ts`) — ambas leen
+`rsvp.deadline` de `src/config/invitation.ts` — y la policy de insert de
+`invitados_karen` (fecha escrita en `schema.sql`). Si la clienta la cambia,
+actualizar el config Y volver a correr el bloque de esa policy.
+
+## Moderación de la Galería
+
+No hay moderación: una foto se publica al instante. Para quitar una foto
+indebida, borrar la fila en `fotos_galeria_karen` y el archivo en Storage
+(`invitation_assets/karen/gallery/...`).
+
+## Convención de nombres
+
+- `id` de la invitación: `karen` (rate limiting `karen:rsvp` / `karen:music`,
+  prefijo de Storage `karen/gallery/`, `contact_clicks.invitation`).
+- Tablas: `invitados_karen`, `musica_karen`, `fotos_galeria_karen`.
+- `contact-clicks.sql`: tabla compartida del footer, ya existe; no se toca.

@@ -1,21 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Heart, QrCode, Download, X } from "lucide-react";
 import Image from "next/image";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import type { InvitationConfig } from "@/config/invitation";
+import { trimmedAsset } from "@/components/ui/LaceFrame";
+import { Ornament, OrnamentDivider } from "@/components/ui/Ornament";
+import { ASSETS, type InvitationConfig } from "@/config/invitation";
+
+// "Lluvia de sobres": sobrecitos cayendo dentro de la tarjeta, cada uno con
+// su columna, tamaño, duración y desfase (delays negativos -> ya están a
+// media caída al montar, sin un arranque "vacío").
+const RAIN = [
+  { left: "4%", size: 42, duration: 7, delay: -1 },
+  { left: "20%", size: 32, duration: 5.5, delay: -4 },
+  { left: "38%", size: 36, duration: 6.5, delay: -2.5 },
+  { left: "58%", size: 30, duration: 5, delay: -0.5 },
+  { left: "72%", size: 40, duration: 7.5, delay: -5 },
+  { left: "86%", size: 32, duration: 6, delay: -3 },
+];
 
 /**
- * Portado de xv-antonella-nextjs-supabase (P5) -- único módulo del paquete
- * VIP de esta clienta que xv-andrea-carolina no tenía (esa clienta decidió
- * no incluir Mesa de Regalos). Layout de dos columnas: izquierda = acordeón
- * de preferencias, derecha = "sobre" interactivo que abre el QR bancario en
- * un modal. Adaptado a las convenciones de esta base (colores desde
- * `theme.colors`, `FlowBackground`/`getSectionFlow`, `SectionHeader`) en
- * vez de los estilos propios del original.
+ * Regalos en el idioma visual de Karen (pedido de la clienta: las tarjetas
+ * blancas se veían "plantilla"): título + ornamento dorado + mensaje en
+ * cursiva; las ideas de regalo en un desplegable, como ilustraciones
+ * flotando; y la
+ * lluvia de sobres como escena (sobre + paraguas + sobrecitos cayendo).
+ * El QR (y su modal portaleado) se conserva para clientas que lo den.
  */
 export function GiftRegistrySection({ config }: { config: InvitationConfig }) {
   const [showOptions, setShowOptions] = useState(false);
@@ -53,258 +66,218 @@ export function GiftRegistrySection({ config }: { config: InvitationConfig }) {
   const { colors } = config.theme;
   const { giftRegistry } = config;
   const hasPreferences = giftRegistry.preferences.length > 0;
+  const rainEnvelope = config.visuals.giftEnvelope
+    ? trimmedAsset(config.visuals.giftEnvelope, 120)
+    : null;
 
   return (
-    <section className="relative py-12 px-6 flex flex-col items-center overflow-hidden">
-      <div
-        className="absolute bottom-0 left-0 w-[400px] h-[400px] pointer-events-none"
-        style={{
-          background: `radial-gradient(ellipse at center, ${colors.gold}18 0%, transparent 70%)`,
-        }}
-      />
-
-      <div className="relative z-10 max-w-3xl w-full flex flex-col items-center">
-        <div className="text-center mb-10">
-          <SectionHeader
-            eyebrow="Sugerencias"
-            title="Regalos"
-            colors={colors}
-            className="mb-4"
-          />
-          <p
-            className="font-sans text-xs tracking-[0.15em] uppercase leading-relaxed"
-            style={{ color: colors.ink, opacity: 0.8 }}
-          >
-            {giftRegistry.message}
-          </p>
-        </div>
-
-        {/* Sin lista de preferencias (boda: solo sobres + QR), la columna
-            izquierda no se monta y la tarjeta de sobres/QR queda sola y
-            centrada, en vez de una grilla de dos con un hueco. */}
-        <div
-          className={`grid grid-cols-1 gap-5 w-full ${hasPreferences ? "md:grid-cols-2" : "max-w-md"}`}
+    <section className="relative py-14 px-6 flex flex-col items-center overflow-hidden">
+      <div className="relative z-10 max-w-3xl w-full flex flex-col items-center text-center">
+        <SectionHeader
+          eyebrow="Sugerencias"
+          title="Regalos"
+          colors={colors}
+          className="mb-3"
+        />
+        <OrnamentDivider src={ASSETS.ornamento} className="mb-5" />
+        <p
+          className="font-display italic text-lg md:text-xl leading-snug max-w-sm mb-10"
+          style={{ color: colors.ink, opacity: 0.85 }}
         >
-          {hasPreferences && (
-            <div
-              className="flex flex-col items-center text-center p-6 rounded-[2rem] border relative overflow-hidden"
+          {giftRegistry.message}
+        </p>
+
+        {/* Lista de ideas en un DESPLEGABLE (pedido de la clienta: como
+            estaba antes), con el botón en el estilo de Karen (filete
+            dorado, como las opciones del RSVP) y, adentro, las
+            ilustraciones grandes flotando. */}
+        {hasPreferences && (
+          <div className="w-full max-w-sm md:max-w-2xl flex flex-col items-center mb-14">
+            <button
+              type="button"
+              onClick={() => setShowOptions((v) => !v)}
+              aria-expanded={showOptions}
+              aria-controls="giftOptions"
+              className="w-full max-w-xs flex items-center justify-between gap-3 px-5 py-3 rounded-full border-[1.5px] shadow-sm transition-colors"
               style={{
-                backgroundColor: "rgba(255,255,255,0.9)",
-                borderColor: `${colors.accent}20`,
+                borderColor: colors.gold,
+                backgroundColor: showOptions
+                  ? `${colors.gold}22`
+                  : "rgba(255,255,255,0.6)",
               }}
             >
-              <h4
-                className="font-sans text-lg uppercase tracking-[0.25em] font-light mb-1"
+              <span
+                className="font-sans text-[0.65rem] md:text-[0.7rem] uppercase tracking-[0.22em] font-semibold"
                 style={{ color: colors.accent }}
               >
-                Opciones
-              </h4>
-              <p
-                className="font-sans text-[0.65rem] tracking-[0.15em] uppercase mb-4"
-                style={{ color: colors.ink, opacity: 0.6 }}
+                {showOptions ? "Ocultar lista" : "Ver lista de regalos"}
+              </span>
+              <motion.span
+                animate={{ rotate: showOptions ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex"
               >
-                Algunas ideas que me encantarían
-              </p>
+                <ChevronDown size={16} color={colors.accent} />
+              </motion.span>
+            </button>
 
-              <button
-                onClick={() => setShowOptions((v) => !v)}
-                className="w-full flex items-center justify-between px-5 py-3 rounded-2xl border shadow-sm transition-colors"
-                style={{
-                  backgroundColor: `${colors.accentSoft}22`,
-                  borderColor: `${colors.accent}30`,
-                }}
-              >
-                <span
-                  className="font-sans text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] font-medium"
-                  style={{ color: colors.accent }}
-                >
-                  {showOptions ? "Ocultar opciones" : "Ver lista de regalos"}
-                </span>
+            <AnimatePresence initial={false}>
+              {showOptions && (
                 <motion.div
-                  animate={{ rotate: showOptions ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
+                  id="giftOptions"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden w-full"
                 >
-                  <ChevronDown size={16} style={{ color: colors.accent }} />
-                </motion.div>
-              </button>
-
-              <AnimatePresence>
-                {showOptions && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="overflow-hidden w-full"
-                  >
-                    <ul className="grid grid-cols-2 gap-y-5 gap-x-2 pt-5">
-                      {giftRegistry.preferences.map((pref) => (
-                        <li
-                          key={pref.label}
-                          className="flex flex-col items-center group"
+                  <ul className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 w-full pt-8">
+                    {giftRegistry.preferences.map((pref, i) => (
+                      <motion.li
+                        key={pref.label}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.15 + i * 0.08 }}
+                        className="flex flex-col items-center"
+                      >
+                        <div
+                          className="relative w-28 h-28 md:w-32 md:h-32 mb-3"
+                          style={{
+                            filter: "drop-shadow(0 8px 12px rgba(59,47,32,0.16))",
+                          }}
                         >
-                          <div className="w-14 h-14 relative mb-2 transition-transform duration-500 group-hover:-translate-y-1">
+                          <div
+                            className="absolute inset-0 animate-float-slow"
+                            style={{ animationDelay: `${-i * 1.6}s` }}
+                          >
                             {pref.image ? (
                               <Image
-                                src={pref.image}
+                                src={trimmedAsset(pref.image, 300)}
                                 alt={pref.label}
                                 fill
-                                sizes="56px"
+                                sizes="128px"
                                 className="object-contain"
-                                style={{
-                                  mixBlendMode: "multiply",
-                                  opacity: 0.85,
-                                }}
                               />
                             ) : (
-                              <span
-                                className="w-10 h-10 rounded-full flex items-center justify-center"
-                                style={{ backgroundColor: `${colors.gold}25` }}
-                              >
-                                <Heart
-                                  size={16}
-                                  style={{ color: colors.gold }}
-                                />
+                              <span className="absolute inset-0 flex items-center justify-center">
+                                <Heart size={32} style={{ color: colors.gold }} />
                               </span>
                             )}
                           </div>
-                          <h5
-                            className="font-sans text-xs font-medium tracking-[0.15em] uppercase"
-                            style={{ color: colors.accent }}
+                        </div>
+                        <span
+                          className="font-display italic text-lg leading-tight"
+                          style={{ color: colors.accent }}
+                        >
+                          {pref.label}
+                        </span>
+                        {pref.detail && (
+                          <span
+                            className="font-sans text-[0.6rem] tracking-[0.15em] uppercase mt-1"
+                            style={{ color: colors.ink, opacity: 0.6 }}
                           >
-                            {pref.label}
-                          </h5>
-                          {pref.detail && (
-                            <p
-                              className="font-sans text-[0.6rem] tracking-[0.15em] uppercase mt-0.5 text-center"
-                              style={{ color: colors.ink, opacity: 0.6 }}
-                            >
-                              {pref.detail}
-                            </p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          )}
+                            {pref.detail}
+                          </span>
+                        )}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
-          {/* Columna derecha: lluvia de sobres + QR bancario */}
-          <div
-            className="flex flex-col items-center text-center p-6 rounded-[2rem] border relative overflow-hidden"
-            style={{
-              background: `linear-gradient(to bottom, ${colors.accent}8, ${colors.accentSoft}18)`,
-              borderColor: `${colors.accentSoft}30`,
-            }}
-          >
-            <p
-              className="font-sans text-[0.65rem] tracking-[0.15em] uppercase mb-4"
-              style={{ color: colors.ink, opacity: 0.8 }}
+        {/* Lluvia de sobres como escena (sin tarjeta): el sobre al centro,
+            el paraguas de encaje sobre él meciéndose y los sobrecitos
+            cayendo alrededor, desvanecidos arriba y abajo con una máscara
+            (estática: no cuesta nada por frame). */}
+        <span
+          className="font-mono text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.3em] mb-2"
+          style={{ color: colors.accent }}
+        >
+          Si deseas tener un detalle diferente
+        </span>
+        <div className="relative w-[min(86vw,340px)] h-72 md:h-80 flex items-end justify-center">
+          {rainEnvelope && (
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={
+                {
+                  "--fall": "320px",
+                  maskImage:
+                    "linear-gradient(to bottom, transparent, #000 18%, #000 78%, transparent)",
+                  WebkitMaskImage:
+                    "linear-gradient(to bottom, transparent, #000 18%, #000 78%, transparent)",
+                } as CSSProperties
+              }
             >
-              Si deseas tener un detalle diferente
-            </p>
-
-            {/* Sobre y QR al mismo tamaño visual (~144px) y sus captions
-                alineados -- `items-end` en la fila para que ambos textos
-                ("Lluvia de sobres" / "Toca para ver el QR") queden a la
-                misma altura aunque las imágenes no midan exactamente lo
-                mismo por dentro. */}
-            <div className="flex items-end justify-center gap-5">
-              {/* Sobre decorativo + caption "Lluvia de sobres" debajo. */}
-              <div className="flex flex-col items-center gap-2 shrink-0">
+              {RAIN.map((drop, i) => (
                 <div
-                  className={`relative flex items-center justify-center ${giftRegistry.qrImage ? "w-32 h-32 md:w-36 md:h-36" : "w-44 h-44 md:w-52 md:h-52"}`}
+                  key={i}
+                  className="absolute top-0 animate-fall"
+                  style={{
+                    left: drop.left,
+                    width: drop.size,
+                    height: drop.size,
+                    animationDuration: `${drop.duration}s`,
+                    animationDelay: `${drop.delay}s`,
+                  }}
                 >
                   <Image
-                    // Sobre de la pareja; respaldo: el sobre genérico compartido.
-                    src={
-                      config.visuals.giftEnvelope ??
-                      "https://res.cloudinary.com/dvaswskle/image/upload/v1788729151/sobre_rosa_fyrtbu.webp"
-                    }
-                    alt="Lluvia de sobres"
+                    src={rainEnvelope}
+                    alt=""
                     fill
-                    sizes="208px"
+                    sizes="42px"
                     className="object-contain"
                   />
                 </div>
-                <p
-                  className="font-bold text-[0.6rem] uppercase tracking-widest text-center max-w-28"
-                  style={{ color: colors.accent, opacity: 0.9 }}
-                >
-                  Lluvia de sobres
-                </p>
-              </div>
-
-              {/* Sin QR (Karen: solo lluvia de sobres + preferencias), la
-                  tarjeta del QR no se dibuja -- un "QR pendiente" permanente
-                  se leería como un error. QR: tarjeta cuadrada simple con
-                  el corazón como sello pequeño en la esquina. */}
-              {giftRegistry.qrImage && (
-                <div className="flex flex-col items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => giftRegistry.qrImage && openQr()}
-                    aria-haspopup="dialog"
-                    aria-label="Abrir código QR"
-                    className="relative w-32 h-32 md:w-36 md:h-36 bg-white p-2 rounded-2xl shadow-md flex flex-col items-center justify-center gap-1"
-                  >
-                    <div
-                      className="w-full aspect-square relative rounded-lg overflow-hidden flex items-center justify-center"
-                      // El QR real (`giftRegistry.qrImage`) ya trae su propio
-                      // fondo blanco -- un color de fondo distinto acá se veía
-                      // como un marco/halo que no calzaba con esa imagen. Solo
-                      // se usa `accentSoft` cuando NO hay imagen (ícono de
-                      // respaldo), para que el ícono siga teniendo un fondo
-                      // con algo de color.
-                      style={{
-                        backgroundColor: giftRegistry.qrImage
-                          ? "#fff"
-                          : colors.accentSoft,
-                      }}
-                    >
-                      {giftRegistry.qrImage ? (
-                        <Image
-                          src={giftRegistry.qrImage}
-                          alt="Código QR"
-                          fill
-                          sizes="144px"
-                          // QR local: el loader de Cloudinary no aplica; se sirve
-                          // tal cual (es chico, no necesita redimensionado).
-                          unoptimized
-                          className="object-contain"
-                        />
-                      ) : (
-                        <QrCode size={32} style={{ color: colors.gold }} />
-                      )}
-                    </div>
-                    <p
-                      className="font-mono text-[0.5rem] tracking-[0.25em] uppercase font-bold"
-                      style={{ color: colors.accent }}
-                    >
-                      {config.client.name}
-                    </p>
-                    <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center absolute -top-2.5 -right-2.5 shadow-md"
-                      style={{ backgroundColor: colors.accent }}
-                    >
-                      <Heart size={12} className="text-white fill-white" />
-                    </div>
-                  </button>
-                  <p
-                    className="font-bold text-[0.6rem] uppercase tracking-widest text-center"
-                    style={{ color: colors.accent, opacity: 0.9 }}
-                  >
-                    {giftRegistry.qrImage
-                      ? "Toca para ver el QR"
-                      : "QR pendiente"}
-                  </p>
-                </div>
-              )}
+              ))}
             </div>
+          )}
+          <Ornament
+            src={ASSETS.paraguas}
+            className="top-0 left-[22%] md:left-[24%] w-36 h-37 md:w-40 md:h-41 -rotate-10 z-10"
+            sizes="144px"
+            motion="sway"
+          />
+          <div
+            className="relative z-10 w-40 h-52 md:w-44 md:h-58 animate-float-slow"
+            style={{ filter: "drop-shadow(0 10px 16px rgba(59,47,32,0.18))" }}
+          >
+            <Image
+              // Sobre de la pareja; respaldo: el sobre genérico compartido.
+              src={
+                config.visuals.giftEnvelope ??
+                "https://res.cloudinary.com/dvaswskle/image/upload/v1788729151/sobre_rosa_fyrtbu.webp"
+              }
+              alt="Lluvia de sobres"
+              fill
+              sizes="176px"
+              className="object-contain"
+            />
           </div>
         </div>
+        <span
+          className="font-display italic text-2xl md:text-3xl mt-3"
+          style={{ color: colors.accent }}
+        >
+          Lluvia de sobres
+        </span>
+
+        {/* QR bancario solo si la clienta lo da (Karen: no). */}
+        {giftRegistry.qrImage && (
+          <button
+            type="button"
+            onClick={openQr}
+            aria-haspopup="dialog"
+            className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-full font-sans text-[0.7rem] uppercase tracking-[0.25em] font-semibold shadow-md"
+            style={{ backgroundColor: colors.accent, color: colors.paper }}
+          >
+            <QrCode size={15} /> Ver QR
+          </button>
+        )}
       </div>
 
       {/* Modal del QR: portaleado a <body>, mismo patrón que la lightbox de

@@ -96,6 +96,31 @@ html {
   animation: spin-slow 40s linear infinite;
 }
 
+/* "Lluvia de sobres" (Regalos): cada sobrecito cae de arriba abajo de su
+   contenedor girando un poco. Solo transform/opacity -> compositor. La
+   distancia la da la variable `--fall` (alto del contenedor). */
+@keyframes fall {
+  0% { transform: translate3d(0, -40px, 0) rotate(-12deg); opacity: 0; }
+  12% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate3d(14px, var(--fall, 260px), 0) rotate(14deg); opacity: 0; }
+}
+
+.animate-fall {
+  animation: fall 6s linear infinite;
+}
+
+/* Notas musicales subiendo y desvaneciéndose (Música). */
+@keyframes rise {
+  0% { transform: translate3d(0, 0, 0) rotate(-8deg); opacity: 0; }
+  20% { opacity: 0.9; }
+  100% { transform: translate3d(12px, -110px, 0) rotate(10deg); opacity: 0; }
+}
+
+.animate-rise {
+  animation: rise 4.5s ease-out infinite;
+}
+
 /* Accesibilidad: patrón conservado de la referencia (único hallazgo de
    Proyecto 4 marcado explícitamente como "conservar"). */
 @media (prefers-reduced-motion: reduce) {

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Footprints } from "lucide-react";
 import { trimmedAsset } from "@/components/ui/LaceFrame";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { Ornament } from "@/components/ui/Ornament";
 import { ASSETS, type InvitationConfig } from "@/config/invitation";
 
 /**
@@ -45,12 +46,28 @@ export function DressCodeSection({ config }: { config: InvitationConfig }) {
 
   return (
     <section className="relative py-10 px-6 flex flex-col items-center overflow-hidden">
+      {/* Enredaderas trepando por ambos costados (simétricas), detrás del
+          contenido. En móvil asoman desde el borde. */}
+      <Ornament
+        src={ASSETS.floresDoradas}
+        className="top-[22%] -left-6 md:left-[8%] w-20 h-44 md:w-28 md:h-61 z-0"
+        sizes="112px"
+        motion="float"
+      />
+      <Ornament
+        src={ASSETS.floresDoradas}
+        className="top-[22%] -right-6 md:right-[8%] w-20 h-44 md:w-28 md:h-61 z-0"
+        sizes="112px"
+        motion="float"
+        delay="-3s"
+        flipX
+      />
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-[380px] md:max-w-[420px] flex flex-col items-center text-center"
+        className="relative z-10 w-full max-w-[380px] md:max-w-[420px] flex flex-col items-center text-center"
       >
         {/* Ornamento superior (asset 574x135 recortado). */}
         <div
@@ -86,12 +103,33 @@ export function DressCodeSection({ config }: { config: InvitationConfig }) {
             className="relative w-[230px] md:w-[270px] aspect-[1408/975] mb-6"
             style={{ filter: "drop-shadow(0 10px 16px rgba(59,47,32,0.18))" }}
           >
-            <Image
-              src={trimmedAsset(config.dressCode.image, 700)}
-              alt="Referencia de estilo"
-              fill
-              sizes="(max-width: 768px) 230px, 270px"
-              className="object-contain"
+            {/* Flota suave tras la entrada (hijo propio: el `transform`
+                del motion.div es de la entrada). */}
+            <div className="absolute inset-0 animate-float-slow">
+              <Image
+                src={trimmedAsset(config.dressCode.image, 700)}
+                alt="Referencia de estilo"
+                fill
+                sizes="(max-width: 768px) 230px, 270px"
+                className="object-contain"
+              />
+            </div>
+            {/* Dos velas custodiando el abanico (quietas: una vela
+                flotando se vería rara). */}
+            <Ornament
+              src={ASSETS.vela}
+              className="-left-11 md:-left-16 bottom-0 w-9 h-19 md:w-11 md:h-24"
+              sizes="44px"
+              motion="none"
+              width={200}
+            />
+            <Ornament
+              src={ASSETS.vela}
+              className="-right-11 md:-right-16 bottom-0 w-9 h-19 md:w-11 md:h-24"
+              sizes="44px"
+              motion="none"
+              width={200}
+              flipX
             />
           </motion.div>
         ) : (

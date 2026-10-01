@@ -70,7 +70,7 @@ export function ParentsSection({ config }: { config: InvitationConfig }) {
                 className="font-script text-[1.9rem] md:text-[1.8rem] lg:text-[2rem] leading-tight"
                 style={{ color: colors.accent }}
               >
-                {group.names[0]}
+                {group.names[1]}
               </h3>
               <span
                 className="font-script text-2xl leading-none my-0.5"
@@ -82,7 +82,7 @@ export function ParentsSection({ config }: { config: InvitationConfig }) {
                 className="font-script text-[1.9rem] md:text-[1.8rem] lg:text-[2rem] leading-tight"
                 style={{ color: colors.accent }}
               >
-                {group.names[1]}
+                {group.names[0]}
               </h3>
             </motion.div>
           ))}

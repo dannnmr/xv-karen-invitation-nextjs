@@ -6,7 +6,7 @@ import { z } from "zod";
  * Regla (ver ~/.claude/CLAUDE.md y la skill invitation-master):
  * no leer `process.env.*` disperso en componentes/config — todo pasa por aquí.
  * Solo se valida lo que los módulos activos de ESTA invitación necesitan
- * (RSVP + Gallery + Music dependen de Supabase).
+ * (RSVP, Música, Galería y /contacto dependen de Supabase).
  */
 const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z
