@@ -130,11 +130,15 @@ export function RSVPSection({ config }: { config: InvitationConfig }) {
           eyebrow="Reserva tu lugar"
           title="Confirma tu asistencia"
           colors={colors}
-          className="mb-4"
-          titleClassName="text-[2.2rem] md:text-[3rem] leading-[0.95]"
+          // `mb-2!`: SectionHeader trae su propio mb-8 y un mb-4 normal no
+          // lo pisa (gana el de mayor valor en el CSS).
+          className="mb-2!"
+          // `leading-[0.95]!`: SectionHeader trae `leading-tight` (1.25)
+          // fijo en el h2 y le ganaba -> mucho aire entre las dos líneas.
+          titleClassName="text-[2.2rem] md:text-[3rem] leading-[0.95]!"
         />
         <p
-          className="font-sans text-[0.65rem] md:text-xs tracking-[0.12em] uppercase mb-5 text-center"
+          className="font-sans text-[0.65rem] md:text-xs tracking-[0.12em] uppercase leading-tight mb-3 text-center"
           style={{ color: colors.ink, opacity: 0.75 }}
         >
           Confirmar antes del{" "}
@@ -157,7 +161,7 @@ export function RSVPSection({ config }: { config: InvitationConfig }) {
         >
           <label
             htmlFor="nombre"
-            className="block font-sans text-[0.7rem] md:text-xs uppercase tracking-[0.2em] font-semibold mb-2 text-center"
+            className="block font-sans text-[0.7rem] md:text-xs uppercase tracking-[0.2em] font-semibold leading-tight mb-1.5 text-center"
             style={{ color: colors.accent }}
           >
             Escribe tu nombre completo
@@ -193,7 +197,7 @@ export function RSVPSection({ config }: { config: InvitationConfig }) {
           <p
             id="nombreError"
             role="alert"
-            className="min-h-5 mt-1.5 mb-1 font-sans text-[0.65rem] text-center"
+            className="min-h-4 mt-1 mb-0.5 font-sans text-[0.65rem] text-center"
             style={{ color: "#B3261E" }}
           >
             {showNameError && "Por favor, escribe tu nombre para confirmar."}
@@ -203,7 +207,7 @@ export function RSVPSection({ config }: { config: InvitationConfig }) {
               otra (pedido de la clienta). */}
           <input type="hidden" name="asistencia" value={attending} />
           <div
-            className="flex flex-col gap-2 mb-4"
+            className="flex flex-col gap-2 mb-3"
             role="radiogroup"
             aria-label="¿Asistirás?"
           >
@@ -297,10 +301,11 @@ export function RSVPSection({ config }: { config: InvitationConfig }) {
 
   return (
     <section className="relative py-20 px-6 flex flex-col items-center overflow-hidden">
-      {/* En móvil el encaje es más ancho que la pantalla (el overflow de la
-          sección recorta los bordes de encaje) para que la zona lisa tenga
-          espacio para el formulario. */}
-      <div className="relative w-[92vw] max-w-[560px] shrink-0">
+      {/* El encaje es MÁS ANCHO que la pantalla en móvil (el overflow de la
+          sección recorta sus bordes laterales): el rectángulo crema es una
+          proporción fija del dibujo, así que la única forma de ensancharlo
+          es agrandar el encaje entero (pedido de la clienta). */}
+      <div className="relative w-[112vw] max-w-[640px] shrink-0">
         {/* Corazón de encaje asomando por detrás del marco (arriba a la
             derecha), inclinado. */}
         <div
@@ -324,13 +329,13 @@ export function RSVPSection({ config }: { config: InvitationConfig }) {
             contrapeso diagonal del corazón. */}
         <Ornament
           src={ASSETS.floresDoradas}
-          className="-left-5 md:-left-12 bottom-[6%] w-16 h-35 md:w-22 md:h-48 z-10"
+          className="left-[5%] md:-left-12 bottom-[6%] w-16 h-35 md:w-22 md:h-48 z-10"
           sizes="88px"
           motion="float-medium"
         />
         <Ornament
           src={ASSETS.florDorada}
-          className="-left-4 md:-left-10 -bottom-3 w-16 h-16 md:w-20 md:h-20 -rotate-12 z-10"
+          className="left-[6%] md:-left-10 -bottom-3 w-16 h-16 md:w-20 md:h-20 -rotate-12 z-10"
           sizes="80px"
           width={300}
           delay="-2s"
@@ -342,9 +347,10 @@ export function RSVPSection({ config }: { config: InvitationConfig }) {
           // alto. El form (con sí/no) no entra en el aspect ratio, así que
           // el marco crece y su borde (~16.6% del ALTO) engorda; el padding
           // vertical (% del ANCHO) tiene que cubrirlo: p >= 0.25 * alto del
-          // contenido -> 30% alcanza en móvil (~450px con las opciones en
-          // vertical).
-          padding="30% 20% 30% 18%"
+          // contenido -> 27% alcanza en móvil (~400px con las opciones en
+          // vertical y los textos juntos). Con el encaje más ancho el
+          // contenido es más bajo -> 24% alcanza.
+          padding="24% 20% 24% 18%"
           className="aspect-[500/613] flex flex-col justify-center"
           fallbackColor={colors.paper}
         >

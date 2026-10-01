@@ -150,16 +150,27 @@ export function HeroSection({
                 <span
                   aria-hidden="true"
                   className="absolute font-display font-semibold text-[130px] md:text-[170px] leading-none select-none"
-                  style={{ color: colors.paper, opacity: 0.6 }}
+                  style={{ color: colors.paper, opacity: 0.45 }}
                 >
                   XV
                 </span>
+                {/* Nombre en PERLA con sombra café (pedido: que se note más
+                    sobre el marco dorado y el paisaje): relleno nacarado con
+                    `background-clip: text` + contorno/sombra con
+                    `drop-shadow` (sigue la silueta de la letra; un
+                    text-shadow se vería a través del relleno transparente).
+                    El padding agranda la caja del fondo para que los rasgos
+                    de la letra script que sobresalen no queden sin relleno. */}
                 <h1
-                  className="relative font-pinyon-script text-[68px] md:text-[84px] leading-none"
+                  className="relative font-pinyon-script text-[82px] md:text-[104px] leading-none px-4 py-3"
                   style={{
-                    color: colors.accent,
-                    textShadow:
-                      "0 0 14px rgba(255,251,242,0.9), 0 2px 6px rgba(59,47,32,0.35)",
+                    color: "transparent",
+                    backgroundImage:
+                      "linear-gradient(180deg, #FFFDF8 0%, #F4EADA 45%, #FFFFFF 62%, #E6D8C0 100%)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    filter:
+                      "drop-shadow(0 1px 0 #5C3F1E) drop-shadow(0 -0.5px 0 #5C3F1E) drop-shadow(0 3px 4px rgba(59,47,32,0.7)) drop-shadow(0 0 12px rgba(59,47,32,0.4))",
                   }}
                 >
                   {config.client.name}

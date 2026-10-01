@@ -15,9 +15,10 @@ interface EnvelopeScreenProps {
 }
 
 /**
- * Con assets reales: dos cortinas (`left`/`right`, cada imagen cubre su
- * mitad de la pantalla) + broche central + cuerda opcional (`pullCord`)
- * que las abre. Sin ellos, degrada al fallback de texto + botón (nunca una
+ * Con assets reales: dos solapas o cortinas (`left`/`right`, cada imagen
+ * cubre la pantalla con su mitad dibujada) sobre un fondo (`complete`) +
+ * broche central que abre al tocarlo, o una cuerda opcional (`pullCord`)
+ * en su lugar. Sin ellos, degrada al fallback de texto + botón (nunca una
  * ruta rota).
  *
  * El contenedor raíz es `transparent` a propósito (como el original de
@@ -98,17 +99,27 @@ export function EnvelopeScreen({
     );
   }
 
-  // Cortinas: se RECOGEN hacia su borde exterior (scaleX con origen en el
-  // borde, como una cortina real que se junta) y recién al final se
-  // desvanecen -- no se deslizan enteras fuera de pantalla como las solapas
-  // de un sobre. `delay`: deja ver primero el tirón de la cuerda.
-  const curtainOpen = { scaleX: [1, 0.28, 0.28], opacity: [1, 1, 0] };
+  // Con cuerda = cortinas: se RECOGEN hacia su borde exterior (scaleX con
+  // origen en el borde) y recién al final se desvanecen; `delay` deja ver
+  // primero el tirón. Sin cuerda = solapas de un sobre (Karen): cada una se
+  // DESLIZA hacia su lado mientras el broche se desvanece.
+  const isCurtain = Boolean(envelope?.pullCord);
+  // Solapas: fotogramas explícitos del mismo largo que `times` (con un `x`
+  // de un solo valor + `times` de 3, Framer daba la animación por
+  // terminada al instante y el sobre desaparecía sin deslizarse).
+  const openLeft = isCurtain
+    ? { scaleX: [1, 0.28, 0.28], opacity: [1, 1, 0] }
+    : { x: ["0%", "-85%", "-100%"], opacity: [1, 1, 0] };
+  const openRight = isCurtain
+    ? openLeft
+    : { x: ["0%", "85%", "100%"], opacity: [1, 1, 0] };
   const curtainTransition = {
-    duration: 1.6,
+    duration: isCurtain ? 1.6 : 1.4,
     ease: [0.65, 0, 0.35, 1] as const,
-    delay: 0.35,
+    delay: isCurtain ? 0.35 : 0.25,
     times: [0, 0.8, 1],
   };
+  const closed = { scaleX: 1, x: "0%", opacity: 1 };
 
   return (
     <div
@@ -139,14 +150,18 @@ export function EnvelopeScreen({
         )}
       </AnimatePresence>
 
-      {/* Cortina izquierda -- dispara onOpen cuando la animación real
-          termina. */}
+      {/* Solapa / cortina izquierda -- dispara onOpen cuando la animación
+          de APERTURA termina. Se mira qué animación terminó (la de
+          apertura es la única con `opacity` en fotogramas): al tocar,
+          Framer también avisa el fin de la animación "cerrada" previa, ya
+          con `isOpening` en true, y el sobre se desmontaba al instante. */}
       <motion.div
-        initial={{ scaleX: 1, opacity: 1 }}
-        animate={isOpening ? curtainOpen : { scaleX: 1, opacity: 1 }}
+        initial={closed}
+        animate={isOpening ? openLeft : closed}
         transition={curtainTransition}
-        onAnimationComplete={() => {
-          if (isOpening) onOpen();
+        onAnimationComplete={(definition) => {
+          const opacity = (definition as { opacity?: unknown }).opacity;
+          if (isOpening && Array.isArray(opacity)) onOpen();
         }}
         className="absolute inset-0 z-10 w-full"
         style={{ transformOrigin: "left center" }}
@@ -161,10 +176,10 @@ export function EnvelopeScreen({
         />
       </motion.div>
 
-      {/* Cortina derecha */}
+      {/* Solapa / cortina derecha */}
       <motion.div
-        initial={{ scaleX: 1, opacity: 1 }}
-        animate={isOpening ? curtainOpen : { scaleX: 1, opacity: 1 }}
+        initial={closed}
+        animate={isOpening ? openRight : closed}
         transition={curtainTransition}
         className="absolute inset-0 z-10 w-full"
         style={{ transformOrigin: "right center" }}
@@ -269,10 +284,9 @@ export function EnvelopeScreen({
         </motion.div>
       )}
 
-      {/* Broche / sello -- también abre al tocarlo. Solo sin cuerda: con
-          cuerda (Karen) ella y su cartela son la única forma de abrir y el
-          centro queda libre (se quitó la máscara a pedido). `seal` sigue en
-          la config porque layout.tsx lo usa como favicon. */}
+      {/* Broche / sello -- abre al tocarlo. Solo sin cuerda: con cuerda,
+          ella y su cartela son la forma de abrir y el centro queda libre.
+          `seal` también es el favicon (layout.tsx). */}
       <AnimatePresence>
         {!isOpening && !envelope?.pullCord && (
           <motion.div

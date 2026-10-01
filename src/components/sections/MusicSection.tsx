@@ -22,7 +22,8 @@ const NOTES = [
 /**
  * Sugerencias de canciones -- misma lógica que xv-andrea-carolina (Server
  * Action `suggestSong`, honeypot, rate limit, tabla `musica_karen`); solo
- * cambia el diseño, en el idioma de Karen: par de máscaras venecianas
+ * cambia el diseño, en el idioma de Karen: cortinaje de tela arriba, par
+ * de máscaras venecianas
  * meciéndose, título + ornamento dorado y el campo dentro de la cartela de
  * encaje, con notas musicales subiendo.
  */
@@ -60,6 +61,29 @@ export function MusicSection({ config }: { config: InvitationConfig }) {
     <section
       className="relative py-16 px-6 flex flex-col items-center overflow-hidden"
     >
+      {/* Cortinaje de tela colgando arriba, como el lazo de un escenario,
+          detrás de las máscaras. */}
+      <Ornament
+        src={ASSETS.tela}
+        className="-top-3 left-[4%] right-[4%] md:left-[32%] md:right-[32%] aspect-400/236 z-0"
+        sizes="(max-width: 768px) 92vw, 36vw"
+        motion="none"
+      />
+      {/* Enredaderas doradas meciéndose a los dos lados (simétricas). */}
+      <Ornament
+        src={ASSETS.floresDoradas}
+        className="top-[30%] -left-8 md:left-[12%] w-18 h-40 md:w-24 md:h-52 z-0"
+        sizes="96px"
+        motion="float-medium"
+      />
+      <Ornament
+        src={ASSETS.floresDoradas}
+        className="top-[30%] -right-8 md:right-[12%] w-18 h-40 md:w-24 md:h-52 z-0"
+        sizes="96px"
+        motion="float-medium"
+        delay="-2.5s"
+        flipX
+      />
       <div className="relative z-10 max-w-lg w-full flex flex-col items-center">
         {/* Par de máscaras venecianas (baile de máscaras): dorada y negra
             cruzadas, meciéndose a destiempo como colgantes. */}

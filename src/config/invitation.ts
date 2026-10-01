@@ -131,8 +131,8 @@ export interface InvitationConfig {
     heroDecorations: DecorationSpec[];
     envelope?: {
       complete?: string;
-      left?: string; // cortina izquierda
-      right?: string; // cortina derecha
+      left?: string; // solapa / cortina izquierda
+      right?: string; // solapa / cortina derecha
       seal?: string; // medallón central, clickeable
       pullCord?: string; // cuerda que abre las cortinas
     };
@@ -348,13 +348,14 @@ export const invitationConfig: InvitationConfig = {
     // El Hero de Karen compone sus 7 assets propios (HeroSection.tsx); no
     // usa decoraciones sueltas.
     heroDecorations: [],
-    // Cortinas y cuerda compartidas con la boda de Ronaldo & Maria
-    // (crema, van con esta paleta); medallón = máscara veneciana dorada.
+    // Sobre de encaje: fondo (sobre completo) + dos solapas que se abren
+    // hacia los lados + broche de lacre "K" al centro (se toca para abrir;
+    // también es el favicon, ver layout.tsx). Sin cuerda.
     envelope: {
-      left: A("v1790660537/lado_izquierdo_cfobtr.webp"),
-      right: A("v1790660537/lado_derecho_nptyof.webp"),
-      pullCord: A("v1790661204/cuerda_fno3vh.webp"),
-      seal: ASSETS.mascaraDorada,
+      complete: A("v1790874297/sobre_1_qbeywu.webp"),
+      left: A("v1790874373/lado_izq_1_xhnn5g.webp"),
+      right: A("v1790874374/lado_der_ekdsks.webp"),
+      seal: A("v1790882718/broche_sl5ppc.webp"),
     },
     heroBackground: A("v1790871871/fondo_victoriana_xnaqly.webp"),
     locationSideImage: ASSETS.realezaImage,

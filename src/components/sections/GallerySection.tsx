@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { compressImage } from "@/lib/imageCompressor";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { trimmedAsset } from "@/components/ui/LaceFrame";
-import { OrnamentDivider } from "@/components/ui/Ornament";
+import { Ornament, OrnamentDivider } from "@/components/ui/Ornament";
 import { ASSETS, type InvitationConfig } from "@/config/invitation";
 
 interface Photo {
@@ -38,7 +38,8 @@ function randomFileId() {
  *
  * Diseño Karen: título + ornamento dorado; las fotos se ven DENTRO del
  * marco ovalado dorado (`visuals.galleryFrame`), una a la vez, deslizando o
- * con flechas; el espejo de mano al costado; el botón de subir debajo.
+ * con flechas; la escalera de palacio subiendo hacia el marco y el espejo
+ * de mano al costado; el botón de subir debajo.
  */
 export function GallerySection({ config }: { config: InvitationConfig }) {
   const { colors } = config.theme;
@@ -167,17 +168,18 @@ export function GallerySection({ config }: { config: InvitationConfig }) {
   };
 
   return (
-    <section className="relative py-16 px-6 flex flex-col items-center overflow-hidden">
+    <section className="relative pt-8 pb-16 px-6 flex flex-col items-center overflow-hidden">
       <div className="relative z-10 max-w-lg w-full flex flex-col items-center">
         <SectionHeader
           eyebrow="Captura el momento"
           title="Galería"
           colors={colors}
-          className="mb-3"
+          // `mb-2!`: pisa el mb-8 propio de SectionHeader.
+          className="mb-2!"
         />
-        <OrnamentDivider src={ASSETS.ornamento} className="mb-5" />
+        <OrnamentDivider src={ASSETS.ornamento} className="mb-3" />
         <p
-          className="font-display italic text-lg md:text-xl leading-snug text-center mb-4 max-w-sm"
+          className="font-display italic text-lg md:text-xl leading-snug text-center mb-1 max-w-sm"
           style={{ color: colors.ink, opacity: 0.85 }}
         >
           Comparte tus fotos favoritas de la noche y construyamos juntos el
@@ -188,11 +190,21 @@ export function GallerySection({ config }: { config: InvitationConfig }) {
             medido sobre el asset: 18.6-82.3% del ancho, 16.6-79.4% del
             alto -> la foto va DETRÁS del marco, apenas más grande que el
             hueco para que el borde dorado la tape sin dejar aire. */}
-        <div className="relative mt-2 w-[min(68vw,320px)] aspect-[1000/1347]">
-          {/* Espejo de mano al costado del marco (sin pisarlo), inclinado. */}
+        <div className="relative w-[min(68vw,320px)] aspect-[1000/1347]">
+          {/* Escalera de palacio subiendo hacia el retrato por la izquierda
+              (detrás del marco: el retrato queda "en lo alto"). Más baja
+              que el marco, para que se separe de él sin salirse de la
+              pantalla en móvil. */}
+          <Ornament
+            src={ASSETS.escaleras}
+            className="-left-[42%] md:-left-[62%] -bottom-[18%] md:-bottom-[10%] w-[58%] md:w-[62%] aspect-square"
+            sizes="(max-width: 768px) 45vw, 210px"
+            motion="none"
+          />
+          {/* Espejo de mano al costado derecho del marco, inclinado. */}
           <div
             aria-hidden="true"
-            className="absolute -left-15 md:-left-24 bottom-[2%] w-24 h-45 md:w-20 md:h-50 -rotate-12 pointer-events-none"
+            className="absolute -right-15 md:-right-24 bottom-[2%] w-24 h-45 md:w-20 md:h-50 rotate-12 pointer-events-none"
           >
             {/* Flota (hijo propio: el wrapper ya tiene su `rotate`). */}
             <div className="absolute inset-0 animate-float-medium">
