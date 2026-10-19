@@ -367,6 +367,6 @@ export const invitationConfig: InvitationConfig = {
   },
   rsvp: {
     // 1 semana antes del evento. Offset -04:00 explícito (Bolivia).
-    deadline: new Date("2026-10-17T23:59:59-04:00"),
+    deadline: new Date("2026-10-22T23:59:59-04:00"),
   },
 };
